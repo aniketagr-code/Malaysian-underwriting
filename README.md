@@ -2,7 +2,7 @@
 
 An enterprise-grade, modular InsurTech underwriting engine designed to dynamically calculate motor insurance risk profiles and compute standardized premiums based on real-world actuarial logic (PIAM proxy tariffs, NCD step-backs, and GLM interaction penalties).
 
-## 🏗️ Architecture Overview
+##  Architecture Overview
 
 The system is built as a **Modular Monorepo**, strictly separating the presentation layer from the core actuarial business logic.
 
@@ -33,7 +33,7 @@ graph TD
     API -->|Premium Breakdown & Scorecard| Client
 ```
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 - Python 3.9+
@@ -59,7 +59,7 @@ python -m http.server 8080
 ```
 *Navigate your web browser to `http://localhost:8080/frontend/index.html` to access the dashboard.*
 
-## 🧠 Core Underwriting Logic
+##  Core Underwriting Logic
 
 The pricing engine simulates enterprise insurance logic by calculating a **Composite Risk Score** out of 100 points, broken into functional domains:
 
