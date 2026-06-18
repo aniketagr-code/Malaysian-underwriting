@@ -1,0 +1,20 @@
+{
+    "driver_age": 40,
+    "traffic_violations": 0,
+    "telematics_risk": "Low",
+    "ncd_percentage": 55.0,
+    "prior_claims_count": 0,
+    "average_prior_severity": "Low",
+    "territory": "Urban (KL, Selangor, Penang, Johor)",
+    "flood_zone": "Low",
+    "vehicle_value": 45000,
+    "engine_capacity": 1600,
+    "vehicle_category": "Private Car",
+    "valuation_type": "Market Value",
+    "vehicle_age": 3,
+    "annual_mileage": 10000,
+    "usage_type": "Private",
+    "windscreen_cover": false,
+    "ncd_protector": false,
+    "special_perils_cover": false
+}

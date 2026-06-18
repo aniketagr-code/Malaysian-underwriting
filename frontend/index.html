@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zensung Premium Underwriting</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Deep Navy Sidebar -->
+        <aside class="sidebar">
+            <h1>Zensung Risk<br>Engine</h1>
+            <ul class="nav-menu">
+                <li class="nav-item active"><span>Dashboard</span></li>
+                <li class="nav-item">
+                    <a href="rules.html" target="_blank" style="color: inherit; text-decoration: none; display: block; width: 100%;">
+                        <span>Underwriting Rules Used</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header>
+                <h2>Underwriting Scorecard</h2>
+                <div class="controls">
+                    <label for="test-cases">Load Test Case:</label>
+                    <select id="test-cases">
+                        <option value="">-- Select a Profile --</option>
+                    </select>
+                </div>
+            </header>
+
+            <div class="grid-container">
+                <!-- Left Panel: Form -->
+                <section class="panel panel-left">
+                    <h3>Risk Input Parameters</h3>
+                    <form id="quote-form">
+                        <div class="form-grid">
+                            <!-- Driver -->
+                            <div class="form-group">
+                                <label>Driver Age</label>
+                                <input type="number" id="driver_age" required min="17" max="90">
+                            </div>
+                            <div class="form-group">
+                                <label>Traffic Violations (past 3 yrs)</label>
+                                <input type="number" id="traffic_violations" required min="0" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Telematics Risk</label>
+                                <select id="telematics_risk">
+                                    <option value="Low">Low</option>
+                                    <option value="Med">Medium</option>
+                                    <option value="High">High</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Claims -->
+                            <div class="form-group">
+                                <label>NCD Percentage (%)</label>
+                                <select id="ncd_percentage">
+                                    <option value="55.0">55.0%</option>
+                                    <option value="45.0">45.0%</option>
+                                    <option value="38.33">38.33%</option>
+                                    <option value="30.0">30.0%</option>
+                                    <option value="25.0">25.0%</option>
+                                    <option value="0.0">0.0%</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Prior Claims Count</label>
+                                <input type="number" id="prior_claims_count" required min="0" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Average Prior Severity</label>
+                                <select id="average_prior_severity">
+                                    <option value="Low">Low</option>
+                                    <option value="Med">Medium</option>
+                                    <option value="High">High</option>
+                                </select>
+                            </div>
+
+                            <!-- Geographic -->
+                            <div class="form-group full-width">
+                                <label>Territory</label>
+                                <select id="territory">
+                                    <option value="Urban (KL, Selangor, Penang, Johor)">Urban (KL, Selangor, Penang, Johor)</option>
+                                    <option value="Urban (Other)">Urban (Other)</option>
+                                    <option value="Rural (West Malaysia)">Rural (West Malaysia)</option>
+                                    <option value="Rural (East Malaysia)">Rural (East Malaysia)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Flood Zone Risk</label>
+                                <select id="flood_zone">
+                                    <option value="Low">Low</option>
+                                    <option value="Med">Medium</option>
+                                    <option value="High">High</option>
+                                </select>
+                            </div>
+
+                            <!-- Vehicle -->
+                            <div class="form-group">
+                                <label>Vehicle Value (RM)</label>
+                                <input type="number" id="vehicle_value" required min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Engine Capacity (cc)</label>
+                                <input type="number" id="engine_capacity" required min="100" value="1600">
+                            </div>
+                            <div class="form-group">
+                                <label>Vehicle Category</label>
+                                <select id="vehicle_category">
+                                    <option value="Private Car">Private Car</option>
+                                    <option value="Commercial Pickup">Commercial Pickup</option>
+                                    <option value="Luxury Car">Luxury Car</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Valuation Type</label>
+                                <select id="valuation_type">
+                                    <option value="Market Value">Market Value</option>
+                                    <option value="Agreed Value">Agreed Value</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Vehicle Age (yrs)</label>
+                                <input type="number" id="vehicle_age" required min="0" value="0">
+                            </div>
+
+                            <!-- Usage -->
+                            <div class="form-group">
+                                <label>Annual Mileage (km)</label>
+                                <input type="number" id="annual_mileage" required min="0" value="10000">
+                            </div>
+                            <div class="form-group">
+                                <label>Usage Type</label>
+                                <select id="usage_type">
+                                    <option value="Private">Private</option>
+                                    <option value="Commercial">Commercial</option>
+                                    <option value="E-hailing Commercial">E-hailing Commercial</option>
+                                </select>
+                            </div>
+
+                            <!-- Addons -->
+                            <div class="form-group full-width">
+                                <label>Optional Add-ons</label>
+                                <div class="checkbox-group">
+                                    <label><input type="checkbox" id="windscreen_cover"> Windscreen</label>
+                                    <label><input type="checkbox" id="ncd_protector"> NCD Protector</label>
+                                    <label><input type="checkbox" id="special_perils_cover"> Special Perils (Flood)</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="error-msg" class="error-message"></div>
+                        
+                        <button type="submit" class="btn" id="submit-btn">Generate Quote</button>
+                    </form>
+                </section>
+
+                <!-- Right Panels -->
+                <section class="panel-right">
+                    <!-- Top Right: Dashboard -->
+                    <div class="panel">
+                        <h3>Risk Analysis</h3>
+                        <div class="dashboard-score">
+                            <div class="score-circle" id="display_score">--</div>
+                            <div class="score-details">
+                                <div style="font-size: 0.875rem; color: var(--on-surface-variant); font-weight: 500;">Composite Risk Score</div>
+                                <div id="display_decision" class="decision-badge">PENDING</div>
+                                <div id="display_reinsurance" class="warning-flag">⚠️ Reinsurance Flag</div>
+                            </div>
+                        </div>
+
+                        <!-- 4 New UI Progress Bars -->
+                        <div class="progress-section">
+                            <div class="progress-container">
+                                <div class="progress-header">
+                                    <span>Driver Profile</span>
+                                    <span id="driver-risk-text" class="data-mono">0 / 30</span>
+                                </div>
+                                <div class="progress-track" style="width: 100%; height: 8px; background: #E5E7EB; border-radius: 4px; overflow: hidden; margin-top: 4px;">
+                                    <div id="driver-risk-fill" class="progress-fill" style="width: 0%; height: 100%; background: #1D4ED8; transition: width 0.5s ease-in-out;"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="progress-container">
+                                <div class="progress-header">
+                                    <span>Claims History</span>
+                                    <span id="claims-risk-text" class="data-mono">0 / 25</span>
+                                </div>
+                                <div class="progress-track" style="width: 100%; height: 8px; background: #E5E7EB; border-radius: 4px; overflow: hidden; margin-top: 4px;">
+                                    <div id="claims-risk-fill" class="progress-fill" style="width: 0%; height: 100%; background: #1D4ED8; transition: width 0.5s ease-in-out;"></div>
+                                </div>
+                            </div>
+
+                            <div class="progress-container">
+                                <div class="progress-header">
+                                    <span>Geographic Risk</span>
+                                    <span id="geo-risk-text" class="data-mono">0 / 20</span>
+                                </div>
+                                <div class="progress-track" style="width: 100%; height: 8px; background: #E5E7EB; border-radius: 4px; overflow: hidden; margin-top: 4px;">
+                                    <div id="geo-risk-fill" class="progress-fill" style="width: 0%; height: 100%; background: #1D4ED8; transition: width 0.5s ease-in-out;"></div>
+                                </div>
+                            </div>
+
+                            <div class="progress-container">
+                                <div class="progress-header">
+                                    <span>Vehicle Traits</span>
+                                    <span id="vehicle-risk-text" class="data-mono">0 / 15</span>
+                                </div>
+                                <div class="progress-track" style="width: 100%; height: 8px; background: #E5E7EB; border-radius: 4px; overflow: hidden; margin-top: 4px;">
+                                    <div id="vehicle-risk-fill" class="progress-fill" style="width: 0%; height: 100%; background: #1D4ED8; transition: width 0.5s ease-in-out;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Right: Premium Breakdown -->
+                    <div class="panel">
+                        <h3>Premium Breakdown</h3>
+                        <div class="premium-breakdown">
+                            <div class="breakdown-item">
+                                <span>Base Premium</span>
+                                <span id="bk_base" class="data-mono">RM 0.00</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span>Risk Loading</span>
+                                <span id="bk_loading" class="data-mono">RM 0.00</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span>E-Hailing Surcharge</span>
+                                <span id="bk_ehailing" class="data-mono">RM 0.00</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span>NCD Discount</span>
+                                <span id="bk_ncd" class="data-mono">- RM 0.00</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span>Add-ons</span>
+                                <span id="bk_addons" class="data-mono">RM 0.00</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span>Premium (excl. Tax)</span>
+                                <span id="bk_excl" class="data-mono">RM 0.00</span>
+                            </div>
+                            <div id="display_floor_warning" class="warning-flag" style="margin-bottom: 0.5rem; text-align: center;">🛡️ Minimum Premium Floor Activated</div>
+                            <div id="display_mandatory_addon" class="warning-flag" style="display: none; background-color: #fee2e2; color: #b91c1c; margin-bottom: 0.5rem; text-align: center;">🚨 Mandatory Add-on Applied</div>
+                            <div id="display_ncd_stepback" class="warning-flag" style="display: none; background-color: #fef3c7; color: #b45309; margin-bottom: 0.5rem; text-align: center;">⚠️ NCD Stepped Back to 0% (Prior Claim)</div>
+                            <div class="breakdown-item">
+                                <span>SST (8%)</span>
+                                <span id="bk_sst" class="data-mono">RM 0.00</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span>Stamp Duty</span>
+                                <span id="bk_stamp_duty" class="data-mono">RM 10.00</span>
+                            </div>
+                            <div class="breakdown-item total">
+                                <span>Total Payable</span>
+                                <span id="bk_total" class="data-mono">RM 0.00</span>
+                            </div>
+                        </div>
+                        <div id="display_metadata" style="font-size: 0.75rem; color: var(--on-surface-variant); margin-top: 1rem; text-align: center;"></div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
