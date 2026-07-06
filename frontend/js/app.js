@@ -2,61 +2,27 @@ const testProfiles = [
     {
         name: "1. The Baseline National Car",
         data: {
-            driver_age: 40, traffic_violations: 0, telematics_risk: "Low", ncd_percentage: "55.0", prior_claims_count: 0, average_prior_severity: "Low", territory: "Urban (KL, Selangor, Penang, Johor)", flood_zone: "Low", vehicle_value: 45000, engine_capacity: 1600, vehicle_category: "Private Car", valuation_type: "Market Value", vehicle_age: 3, annual_mileage: 10000, usage_type: "Private", windscreen_cover: false, ncd_protector: false, special_perils_cover: false
+            driver_age: 40, gender: "M", years_licensed: "5+ years", occupation: "Professional/Exec", previous_claims_3yr: "0 claims", traffic_violations: 0, telematics_risk: "Low",
+            engine_capacity: 1600, vehicle_age: 3, vehicle_value: 45000, vehicle_category: "Private Car", valuation_type: "Market Value", modification_status: "Stock/standard", safety_features: "ADAS, AEB, ESC", tyre_condition: "New/good",
+            usage_type: "Private", parking_night: "Garaged", annual_trips: "<5,000", annual_mileage: 10000,
+            prior_claims_count: 0, average_prior_severity: "Low", ncd_percentage: "55.0", fault_profile: "Not at fault", fraud_indicators: "None",
+            territory: "Urban (KL, Selangor, Penang, Johor)", flood_zone: "Low", crime_rate: "Low", road_type: "Highway primary", seasonal_risk: "Year-round",
+            immobiliser: "Factory fitted", gps_tracking: "Active tracking", alarm_system: "OEM alarm",
+            excess_chosen: "High (>1,000)", named_drivers: "1 (owner only)", policy_lapse_history: "No lapse", sum_insured_accuracy: "Accurate", premium_payment: "Annual full",
+            windscreen_cover: false, ncd_protector: false, special_perils_cover: false
         }
     },
     {
         name: "2. The Young High-Risk Speedster",
         data: {
-            driver_age: 20, traffic_violations: 2, telematics_risk: "High", ncd_percentage: "0.0", prior_claims_count: 0, average_prior_severity: "Low", territory: "Urban (Other)", flood_zone: "Low", vehicle_value: 90000, engine_capacity: 1500, vehicle_category: "Private Car", valuation_type: "Market Value", vehicle_age: 2, annual_mileage: 15000, usage_type: "Private", windscreen_cover: false, ncd_protector: false, special_perils_cover: false
-        }
-    },
-    {
-        name: "3. The Klang Valley Flood Risk",
-        data: {
-            driver_age: 35, traffic_violations: 0, telematics_risk: "Low", ncd_percentage: "30.0", prior_claims_count: 0, average_prior_severity: "Low", territory: "Urban (KL, Selangor, Penang, Johor)", flood_zone: "High", vehicle_value: 85000, engine_capacity: 1500, vehicle_category: "Private Car", valuation_type: "Market Value", vehicle_age: 5, annual_mileage: 12000, usage_type: "Private", windscreen_cover: false, ncd_protector: false, special_perils_cover: false
-        }
-    },
-    {
-        name: "4. The Reinsurance Trigger (Luxury Asset)",
-        data: {
-            driver_age: 50, traffic_violations: 0, telematics_risk: "Low", ncd_percentage: "55.0", prior_claims_count: 0, average_prior_severity: "Low", territory: "Urban (KL, Selangor, Penang, Johor)", flood_zone: "Low", vehicle_value: 280000, engine_capacity: 3000, vehicle_category: "Luxury Car", valuation_type: "Market Value", vehicle_age: 1, annual_mileage: 8000, usage_type: "Private", windscreen_cover: false, ncd_protector: false, special_perils_cover: false
-        }
-    },
-    {
-        name: "5. The Hard Underwriting Referral",
-        data: {
-            driver_age: 19, traffic_violations: 2, telematics_risk: "High", ncd_percentage: "0.0", prior_claims_count: 2, average_prior_severity: "High", territory: "Urban (KL, Selangor, Penang, Johor)", flood_zone: "High", vehicle_value: 130000, engine_capacity: 2400, vehicle_category: "Commercial Pickup", valuation_type: "Market Value", vehicle_age: 1, annual_mileage: 50000, usage_type: "E-hailing Commercial", windscreen_cover: false, ncd_protector: false, special_perils_cover: false
-        }
-    },
-    {
-        name: "6. The Premium Floor Boundary Case",
-        data: {
-            driver_age: 65, traffic_violations: 0, telematics_risk: "Low", ncd_percentage: "55.0", prior_claims_count: 0, average_prior_severity: "Low", territory: "Rural (East Malaysia)", flood_zone: "Low", vehicle_value: 5000, engine_capacity: 1300, vehicle_category: "Private Car", valuation_type: "Market Value", vehicle_age: 15, annual_mileage: 5000, usage_type: "Private", windscreen_cover: false, ncd_protector: false, special_perils_cover: false
-        }
-    },
-    {
-        name: "7. The Commercial E-Hailing Fleet Operator",
-        data: {
-            driver_age: 29, traffic_violations: 0, telematics_risk: "Low", ncd_percentage: "0.0", prior_claims_count: 0, average_prior_severity: "Low", territory: "Urban (KL, Selangor, Penang, Johor)", flood_zone: "Med", vehicle_value: 55000, engine_capacity: 1600, vehicle_category: "Private Car", valuation_type: "Market Value", vehicle_age: 4, annual_mileage: 50000, usage_type: "E-hailing Commercial", windscreen_cover: false, ncd_protector: false, special_perils_cover: false
-        }
-    },
-    {
-        name: "8. The NCD Protector Safe-Haven",
-        data: {
-            driver_age: 45, traffic_violations: 0, telematics_risk: "Low", ncd_percentage: "55.0", prior_claims_count: 1, average_prior_severity: "Med", territory: "Rural (West Malaysia)", flood_zone: "Low", vehicle_value: 120000, engine_capacity: 1500, vehicle_category: "Private Car", valuation_type: "Market Value", vehicle_age: 3, annual_mileage: 15000, usage_type: "Private", windscreen_cover: false, ncd_protector: true, special_perils_cover: false
-        }
-    },
-    {
-        name: "9. The East Malaysia Rural 4x4",
-        data: {
-            driver_age: 38, traffic_violations: 0, telematics_risk: "Low", ncd_percentage: "45.0", prior_claims_count: 0, average_prior_severity: "Low", territory: "Rural (East Malaysia)", flood_zone: "Low", vehicle_value: 140000, engine_capacity: 2800, vehicle_category: "Commercial Pickup", valuation_type: "Market Value", vehicle_age: 2, annual_mileage: 20000, usage_type: "Private", windscreen_cover: false, ncd_protector: false, special_perils_cover: false
-        }
-    },
-    {
-        name: "10. The Senior Citizen Driver Zone",
-        data: {
-            driver_age: 78, traffic_violations: 0, telematics_risk: "Med", ncd_percentage: "30.0", prior_claims_count: 0, average_prior_severity: "Low", territory: "Urban (Other)", flood_zone: "Low", vehicle_value: 65000, engine_capacity: 1500, vehicle_category: "Private Car", valuation_type: "Market Value", vehicle_age: 7, annual_mileage: 8000, usage_type: "Private", windscreen_cover: false, ncd_protector: false, special_perils_cover: false
+            driver_age: 20, gender: "M", years_licensed: "2-4 years", occupation: "Manual/Delivery", previous_claims_3yr: "1 claim", traffic_violations: 2, telematics_risk: "High",
+            engine_capacity: 1500, vehicle_age: 2, vehicle_value: 90000, vehicle_category: "Private Car", valuation_type: "Market Value", modification_status: "Major mods", safety_features: "Minimal", tyre_condition: "Worn/illegal",
+            usage_type: "Private", parking_night: "Street parking", annual_trips: ">10,000", annual_mileage: 15000,
+            prior_claims_count: 1, average_prior_severity: "Low", ncd_percentage: "0.0", fault_profile: "At fault", fraud_indicators: "Suspicious",
+            territory: "Urban (Other)", flood_zone: "Low", crime_rate: "High", road_type: "Urban mixed", seasonal_risk: "Year-round",
+            immobiliser: "None", gps_tracking: "None", alarm_system: "None",
+            excess_chosen: "Minimum", named_drivers: "4+", policy_lapse_history: "2+ lapses", sum_insured_accuracy: "Underinsured >10%", premium_payment: "Monthly",
+            windscreen_cover: false, ncd_protector: false, special_perils_cover: false
         }
     }
 ];
@@ -93,23 +59,57 @@ form.addEventListener('submit', async (e) => {
     e.preventDefault();
     errorMsg.style.display = 'none';
     
-    // Gather form data
+    // Check if sum_insured_accuracy is weirdly encoded due to Windows CP-1252 / UTF-8
+    let siaValue = document.getElementById('sum_insured_accuracy').value;
+    if (siaValue.includes('10%') && !siaValue.includes('Under')) {
+        siaValue = 'A�10%';
+    }
+
     const payload = {
         driver_age: parseInt(document.getElementById('driver_age').value),
+        gender: document.getElementById('gender').value,
+        years_licensed: document.getElementById('years_licensed').value,
+        occupation: document.getElementById('occupation').value,
+        previous_claims_3yr: document.getElementById('previous_claims_3yr').value,
         traffic_violations: parseInt(document.getElementById('traffic_violations').value),
         telematics_risk: document.getElementById('telematics_risk').value,
-        ncd_percentage: parseFloat(document.getElementById('ncd_percentage').value),
-        prior_claims_count: parseInt(document.getElementById('prior_claims_count').value),
-        average_prior_severity: document.getElementById('average_prior_severity').value,
-        territory: document.getElementById('territory').value,
-        flood_zone: document.getElementById('flood_zone').value,
-        vehicle_value: parseFloat(document.getElementById('vehicle_value').value),
+
         engine_capacity: parseInt(document.getElementById('engine_capacity').value),
+        vehicle_age: parseInt(document.getElementById('vehicle_age').value),
+        vehicle_value: parseFloat(document.getElementById('vehicle_value').value),
         vehicle_category: document.getElementById('vehicle_category').value,
         valuation_type: document.getElementById('valuation_type').value,
-        vehicle_age: parseInt(document.getElementById('vehicle_age').value),
-        annual_mileage: parseInt(document.getElementById('annual_mileage').value),
+        modification_status: document.getElementById('modification_status').value,
+        safety_features: document.getElementById('safety_features').value,
+        tyre_condition: document.getElementById('tyre_condition').value,
+
         usage_type: document.getElementById('usage_type').value,
+        parking_night: document.getElementById('parking_night').value,
+        annual_trips: document.getElementById('annual_trips').value,
+        annual_mileage: parseInt(document.getElementById('annual_mileage').value),
+
+        prior_claims_count: parseInt(document.getElementById('prior_claims_count').value),
+        average_prior_severity: document.getElementById('average_prior_severity').value,
+        ncd_percentage: parseFloat(document.getElementById('ncd_percentage').value),
+        fault_profile: document.getElementById('fault_profile').value,
+        fraud_indicators: document.getElementById('fraud_indicators').value,
+
+        territory: document.getElementById('territory').value,
+        flood_zone: document.getElementById('flood_zone').value,
+        crime_rate: document.getElementById('crime_rate').value,
+        road_type: document.getElementById('road_type').value,
+        seasonal_risk: document.getElementById('seasonal_risk').value,
+
+        immobiliser: document.getElementById('immobiliser').value,
+        gps_tracking: document.getElementById('gps_tracking').value,
+        alarm_system: document.getElementById('alarm_system').value,
+
+        excess_chosen: document.getElementById('excess_chosen').value,
+        named_drivers: document.getElementById('named_drivers').value,
+        policy_lapse_history: document.getElementById('policy_lapse_history').value,
+        sum_insured_accuracy: siaValue,
+        premium_payment: document.getElementById('premium_payment').value,
+
         windscreen_cover: document.getElementById('windscreen_cover').checked,
         ncd_protector: document.getElementById('ncd_protector').checked,
         special_perils_cover: document.getElementById('special_perils_cover').checked
@@ -147,7 +147,6 @@ function resetDashboard() {
     badge.className = 'decision-badge';
     document.getElementById('display_reinsurance').style.display = 'none';
     
-    // Reset Progress Bars
     const resetProgressBar = (idPrefix, maxVal) => {
         const pb = document.getElementById(`${idPrefix}-risk-fill`);
         const txt = document.getElementById(`${idPrefix}-risk-text`);
@@ -157,10 +156,13 @@ function resetDashboard() {
         }
         if (txt) txt.innerText = `0 / ${maxVal}`;
     };
-    resetProgressBar('driver', 30);
-    resetProgressBar('claims', 25);
-    resetProgressBar('geo', 20);
-    resetProgressBar('vehicle', 15);
+    resetProgressBar('driver', 22);
+    resetProgressBar('vehicle', 19);
+    resetProgressBar('usage', 9);
+    resetProgressBar('claims', 18);
+    resetProgressBar('geo', 13);
+    resetProgressBar('security', 6);
+    resetProgressBar('policy', 11);
 
     document.getElementById('bk_base').textContent = 'RM 0.00';
     document.getElementById('bk_loading').textContent = 'RM 0.00';
@@ -175,14 +177,9 @@ function resetDashboard() {
     document.getElementById('bk_stamp_duty').textContent = 'RM 10.00';
     document.getElementById('bk_total').textContent = 'RM 0.00';
     document.getElementById('display_metadata').textContent = '';
-    
-    // Market comparison no longer exists in index.html, handled gracefully if missing
-    const mc = document.getElementById('market_comparison');
-    if (mc) mc.style.display = 'none';
 }
 
 function updateDashboard(data) {
-    // Score & Decision
     document.getElementById('display_score').textContent = data.composite_score || '--';
     
     const badge = document.getElementById('display_decision');
@@ -193,11 +190,9 @@ function updateDashboard(data) {
         badge.className = 'decision-badge referral';
     }
 
-    // Reinsurance
     document.getElementById('display_reinsurance').style.display = 
         data.reinsurance_referral ? 'block' : 'none';
 
-    // Progress Bars based on score_breakdown
     if (data.score_breakdown) {
         const setProgressBar = (idPrefix, currentVal, maxVal) => {
             const pb = document.getElementById(`${idPrefix}-risk-fill`);
@@ -211,9 +206,9 @@ function updateDashboard(data) {
             if (percentage > 70) {
                 pb.style.backgroundColor = 'var(--crimson)';
             } else if (percentage > 40) {
-                pb.style.backgroundColor = '#fbbf24'; // amber
+                pb.style.backgroundColor = '#fbbf24'; 
             } else {
-                pb.style.backgroundColor = '#1D4ED8'; // default blue
+                pb.style.backgroundColor = '#1D4ED8'; 
             }
         };
 
@@ -222,13 +217,15 @@ function updateDashboard(data) {
             return Object.values(obj).reduce((a, b) => a + b, 0);
         };
 
-        setProgressBar('driver', getScore(data.score_breakdown.driver), 30);
-        setProgressBar('claims', getScore(data.score_breakdown.claims), 25);
-        setProgressBar('geo', getScore(data.score_breakdown.geographic), 20);
-        setProgressBar('vehicle', getScore(data.score_breakdown.vehicle), 15);
+        setProgressBar('driver', getScore(data.score_breakdown.driver), 22);
+        setProgressBar('vehicle', getScore(data.score_breakdown.vehicle), 19);
+        setProgressBar('usage', getScore(data.score_breakdown.usage), 9);
+        setProgressBar('claims', getScore(data.score_breakdown.claims), 18);
+        setProgressBar('geo', getScore(data.score_breakdown.environmental), 13);
+        setProgressBar('security', getScore(data.score_breakdown.security), 6);
+        setProgressBar('policy', getScore(data.score_breakdown.policy), 11);
     }
 
-    // Premium Breakdown
     if (data.premium_breakdown) {
         const fmt = (val) => `RM ${val.toFixed(2)}`;
         document.getElementById('bk_base').textContent = fmt(data.premium_breakdown.base_premium);
@@ -240,55 +237,22 @@ function updateDashboard(data) {
         document.getElementById('bk_sst').textContent = fmt(data.premium_breakdown.sst_amount);
         document.getElementById('bk_stamp_duty').textContent = fmt(data.premium_breakdown.stamp_duty);
         document.getElementById('bk_total').textContent = fmt(data.premium_breakdown.total_payable);
-        
-        // Market Comparison (removed from UI, graceful fallback)
-        const mc = document.getElementById('market_comparison');
-        if (mc) {
-            mc.style.display = 'block';
-            document.getElementById('mc_ours').textContent = fmt(data.premium_breakdown.total_payable);
-            document.getElementById('mc_allianz').textContent = fmt(data.premium_breakdown.total_payable * 1.10);
-            document.getElementById('mc_etiqa').textContent = fmt(data.premium_breakdown.total_payable * 0.95);
-        }
-    } else {
-        document.getElementById('bk_base').textContent = 'N/A';
-        document.getElementById('bk_loading').textContent = 'N/A';
-        document.getElementById('bk_ehailing').textContent = 'N/A';
-        document.getElementById('bk_ncd').textContent = 'N/A';
-        document.getElementById('bk_addons').textContent = 'N/A';
-        document.getElementById('bk_excl').textContent = 'N/A';
-        document.getElementById('display_floor_warning').style.display = 'none';
-        document.getElementById('bk_sst').textContent = 'N/A';
-        document.getElementById('bk_stamp_duty').textContent = 'N/A';
-        document.getElementById('bk_total').textContent = 'N/A';
-        const mc = document.getElementById('market_comparison');
-        if (mc) mc.style.display = 'none';
     }
 
-    // Metadata
     if (data.metadata) {
         const metaKeys = Object.keys(data.metadata);
         const terms = metaKeys.join(" | ");
         document.getElementById('display_metadata').textContent = terms;
         
-        // Premium Floor Warning
         document.getElementById('display_floor_warning').style.display = 
             metaKeys.includes("PREMIUM_FLOOR_APPLIED") ? 'block' : 'none';
             
-        // Mandatory Add-on Warning
         const isMandatory = metaKeys.includes("MANDATORY FLOOD COVER APPLIED");
         document.getElementById('display_mandatory_addon').style.display = isMandatory ? 'block' : 'none';
         
-        // NCD Stepback Warning
         const isNcdSteppedBack = metaKeys.includes("NCD STEP-BACK APPLIED DUE TO PRIOR CLAIMS");
         document.getElementById('display_ncd_stepback').style.display = isNcdSteppedBack ? 'block' : 'none';
         
-        if (isMandatory) {
-            alert("Notice: An add-on (Flood Cover) was applied mandatorily because this vehicle resides in a High Flood Risk zone.");
-        }
-        
-        if (isNcdSteppedBack) {
-            alert("Notice: Due to a prior claim, your No Claim Discount (NCD) has stepped back to 0%.");
-        }
     } else {
         document.getElementById('display_floor_warning').style.display = 'none';
         document.getElementById('display_mandatory_addon').style.display = 'none';
