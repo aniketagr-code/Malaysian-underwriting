@@ -37,7 +37,24 @@ What sets this engine apart from standard calculators is its ability to programm
 
 ---
 
-## 5. Conclusion & Business Value
+## 5. Actuarial Limitations & Variance Analysis
+While the engine successfully digitizes the quoting process, backtesting against historical PIAM datasets (`BITs_Sample_Data_Workbook.xlsx`) revealed two significant mathematical limitations:
+
+1. **Discrete Banding vs. Continuous GLM:** Real-world Malaysian insurers price risk continuously via Generalized Linear Models (GLMs)—every marginal point of risk moves the premium slightly. Our engine uses a simpler rule-based structure, applying loading in four discrete steps (0%, 15%, 30%, 50%). This means two policies with different risk profiles inside the same band get identical loading, guaranteeing a variance against real-world premiums.
+2. **Sparse Historical Data Suppression:** The historical test data only contains 2 of the 23 scorecard factors (Gender and Occupation). Because we cannot fabricate data to avoid data leakage, the remaining 21 factors default to 0 points ("lowest risk"). During testing, the maximum composite score achieved was 21 points, which failed to trigger even the first 40-point risk loading tier. The observed 18-35% variance is therefore the raw gap between unadjusted base tariffs and real-world Final Premiums.
+
+---
+
+## 6. AI Tool Evaluation
+During the development of this engine, AI agents were utilized for code generation and actuarial tuning. This process required rigorous human oversight, highlighting several critical lessons in AI workflow integration:
+
+* **Catching Mathematical Hallucinations (Monotonicity Bug):** An AI agent attempted to "recalibrate" base CC rates by fitting independent linear regressions for each CC bucket. It extrapolated intercepts down to Sum Insured = RM 1,000 (where no data existed). This created a monotonicity violation where a 1650cc engine priced *lower* than a 1400cc engine. This was caught via manual sanity checks and reverted to the stable PIAM tariff rates.
+* **Rejecting Tautological Testing:** The AI initially wrote `pytest` assertions that dynamically set the "pass tolerance" to whatever variance the engine produced, resulting in a 100% pass rate that hid a 200%+ mathematical error. We forced a strict, hardcoded 15% tolerance to expose the real accuracy.
+* **Escaping Corruption:** An AI file-writing tool introduced a syntax error (`\'Unknown\'`) into the validation script. The AI claimed the test ran successfully, but human verification proved the file couldn't even import. This reinforced the rule: never accept an AI summary of success without verifying the raw terminal output.
+
+---
+
+## 7. Conclusion & Business Value
 The Zensung Underwriting Risk Engine successfully bridges the gap between modern software engineering and complex legacy insurance mathematics. 
 
 By utilizing **"Calibrated Test Weights,"** the engine proves that the architecture is fully functional and capable of handling extreme edge cases. When preparing for a commercial launch, an Actuarial team simply needs to supply their proprietary GLM relativities. Because the system is completely modular, those final numbers can be swapped into the backend in minutes without requiring any structural rewrites. 
