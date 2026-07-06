@@ -9,7 +9,33 @@ CRITICAL ACTUARIAL FIXES IMPLEMENTED:
 3. Rate Adequacy Floor Placement: The RM 350 floor is applied to the Core Premium (after NCD and 
    commercial surcharges) BEFORE optional add-ons (Flood, Windscreen) are calculated.
 4. Sequence Lock: Risk Loading -> NCD -> E-Hailing -> Floor -> Add-ons.
-5. Scorecard v1.1.0 Updates: Explicit 0-point bands, GLM concentration penalty, Frequency/Severity decoupling.
+5. Scorecard v1.2.0 Updates: Aligned scoring bands with MV_Risk_Factors dataset, refactored frequency/severity calculation, mapped exact point values.
+
+SCHEMA GAPS IDENTIFIED:
+The following underwriting factors are in the MV_Risk_Factors matrix but lack corresponding fields in schemas.py:
+- Gender (required for Gender + Age combo)
+- Years Licensed
+- Occupation
+- Previous Claims (3yr) (prior_claims_count lacks explicit time horizon)
+- Engine CC (present for premium, but not used in risk scorecard)
+- Modification Status
+- Safety Features
+- Tyre Condition
+- Parking (night)
+- Annual Trips
+- Fault Profile
+- Fraud Indicators
+- Crime Rate (area)
+- Road Type
+- Seasonal Risk
+- Immobiliser
+- GPS Tracking
+- Alarm System
+- Excess Chosen
+- Named Drivers
+- Policy Lapse History
+- Sum Insured Accuracy
+- Premium Payment (Frequency)
 """
 from .schemas import QuoteRequest, Territory, TelematicsRisk, Severity, FloodZone, VehicleCategory, ValuationType, UsageType
 from .config import PREMIUM_FLOOR, SST_RATE, WINDSCREEN_FLAT, FLOOD_RATE, EHAILING_SURCHARGE, NCD_PROTECTOR_LOADING, STAMP_DUTY, CC_RATES_PENINSULAR, ADDITIONAL_VALUE_RATE_PENINSULAR, CC_RATES_EAST_MALAYSIA, ADDITIONAL_VALUE_RATE_EAST_MALAYSIA, SCORECARD_VERSION
@@ -20,31 +46,31 @@ def calculate_driver_score(req: QuoteRequest) -> dict:
     
     # Age
     if req.driver_age <= 25:
-        pts["age"] = 12
+        pts["age"] = 4  # Match MV_Risk_Factors Driver Age (High Risk <21 / Low 25-55)
     elif req.driver_age <= 30:
-        pts["age"] = 8
+        pts["age"] = 0  # Match MV_Risk_Factors Low Risk (25-55)
     elif req.driver_age <= 60:
-        pts["age"] = 0  # EXPLICIT BAND 31-60
+        pts["age"] = 0  # Match MV_Risk_Factors Low Risk (25-55) / Med (56-65)
     elif req.driver_age <= 75:
-        pts["age"] = 5
+        pts["age"] = 2  # Match MV_Risk_Factors Medium Risk (56-65) / High (>65)
     else:
-        pts["age"] = 10
+        pts["age"] = 4  # Match MV_Risk_Factors High Risk (>65)
         
     # Violations
     if req.traffic_violations == 0:
-        pts["violations"] = 0 # EXPLICIT BAND 0
+        pts["violations"] = 0  # Match MV_Risk_Factors Traffic Violations Low Risk
     elif req.traffic_violations == 1:
-        pts["violations"] = 5
+        pts["violations"] = 1  # Match MV_Risk_Factors Traffic Violations Medium Risk
     else:
-        pts["violations"] = 10
+        pts["violations"] = 3  # Match MV_Risk_Factors Traffic Violations High Risk
         
     # Telematics
     if req.telematics_risk == TelematicsRisk.LOW:
-        pts["telematics"] = 0 # EXPLICIT BAND low
+        pts["telematics"] = 0
     elif req.telematics_risk == TelematicsRisk.MED:
-        pts["telematics"] = 4
+        pts["telematics"] = 0  # Not in MV_Risk_Factors, assigned 0
     elif req.telematics_risk == TelematicsRisk.HIGH:
-        pts["telematics"] = 8
+        pts["telematics"] = 0  # Not in MV_Risk_Factors, assigned 0
         
     return {"total": sum(pts.values()), "breakdown": pts}
 
@@ -56,44 +82,35 @@ def calculate_claims_score(req: QuoteRequest) -> dict:
         
     # NCD Step-back proxy
     if req.ncd_percentage == 0.0:
-        pts["ncd_stepback"] = 15
+        pts["ncd_stepback"] = 4  # Match MV_Risk_Factors implied frequency risk
     elif req.ncd_percentage <= 25.0:
-        pts["ncd_stepback"] = 12
-    elif req.ncd_percentage <= 30.0:
-        pts["ncd_stepback"] = 9
-    elif req.ncd_percentage <= 38.33:
-        pts["ncd_stepback"] = 6
-    elif req.ncd_percentage <= 45.0:
         pts["ncd_stepback"] = 3
+    elif req.ncd_percentage <= 30.0:
+        pts["ncd_stepback"] = 2
+    elif req.ncd_percentage <= 38.33:
+        pts["ncd_stepback"] = 1
+    elif req.ncd_percentage <= 45.0:
+        pts["ncd_stepback"] = 0
     elif req.ncd_percentage == 55.0:
-        pts["ncd_stepback"] = 0 # EXPLICIT BAND 55%
-
+        pts["ncd_stepback"] = 0  # Match MV_Risk_Factors implied low risk
+ 
     # Frequency vs Severity math
     if req.prior_claims_count == 0:
-        pts["frequency_severity"] = 0 # EXPLICIT BAND no claims
+        pts["frequency_severity"] = 0  # Match MV_Risk_Factors Claim Frequency Low Risk
     else:
-        # Severity points
+        # Match MV_Risk_Factors Claim Frequency
+        freq_pts = 1 if req.prior_claims_count == 1 else 4
+        
+        # Match MV_Risk_Factors Severity History
         sev_pts = 0
         if req.average_prior_severity == Severity.LOW:
-            sev_pts = 2
+            sev_pts = 1
         elif req.average_prior_severity == Severity.MED:
-            sev_pts = 5
+            sev_pts = 2
         elif req.average_prior_severity == Severity.HIGH:
-            sev_pts = 10
+            sev_pts = 3
             
-        # Count multiplier
-        count_mult = 1.0
-        if req.prior_claims_count == 1:
-            count_mult = 1.0
-        elif req.prior_claims_count == 2:
-            count_mult = 1.5
-        elif req.prior_claims_count == 3:
-            count_mult = 2.0
-        else: # 4+
-            count_mult = 3.0
-            
-        freq_sev_total = int(sev_pts * count_mult)
-        pts["frequency_severity"] = min(25, freq_sev_total) # Capped at 25
+        pts["frequency_severity"] = freq_pts + sev_pts
         
     return {"total": sum(pts.values()), "breakdown": pts}
 
@@ -101,20 +118,20 @@ def calculate_geographic_score(req: QuoteRequest) -> dict:
     pts = {"territory": 0, "flood": 0}
     
     if req.territory == Territory.URBAN_KL_SELANGOR_PENANG_JOHOR:
-        pts["territory"] = 15
+        pts["territory"] = 3  # Match MV_Risk_Factors Geographic Area High Risk
     elif req.territory == Territory.URBAN_OTHER:
-        pts["territory"] = 9 # V1 Simplification: conflates Ipoh/Kuantan. V2 should split by density/theft rate.
+        pts["territory"] = 2  # Match MV_Risk_Factors Geographic Area Medium Risk
     elif req.territory == Territory.RURAL_WEST_MALAYSIA:
-        pts["territory"] = 6
+        pts["territory"] = 0  # Match MV_Risk_Factors Geographic Area Low Risk
     elif req.territory == Territory.RURAL_EAST_MALAYSIA:
-        pts["territory"] = 0
+        pts["territory"] = 0  # Match MV_Risk_Factors Geographic Area Low Risk
         
     if req.flood_zone == FloodZone.LOW:
-        pts["flood"] = 0 # EXPLICIT BAND low
+        pts["flood"] = 0  # Match MV_Risk_Factors Flood Zone Low Risk
     elif req.flood_zone == FloodZone.MED:
-        pts["flood"] = 2
+        pts["flood"] = 1  # Match MV_Risk_Factors Flood Zone Medium Risk
     elif req.flood_zone == FloodZone.HIGH:
-        pts["flood"] = 5
+        pts["flood"] = 3  # Match MV_Risk_Factors Flood Zone High Risk
         
     return {"total": sum(pts.values()), "breakdown": pts}
 
@@ -122,21 +139,21 @@ def calculate_vehicle_score(req: QuoteRequest) -> dict:
     pts = {"category": 0, "valuation": 0, "age": 0}
     
     if req.vehicle_category == VehicleCategory.LUXURY_CAR:
-        pts["category"] = 8
+        pts["category"] = 0  # Not in MV_Risk_Factors
     elif req.vehicle_category == VehicleCategory.COMMERCIAL_PICKUP:
-        pts["category"] = 6
+        pts["category"] = 0  # Not in MV_Risk_Factors
     elif req.vehicle_category == VehicleCategory.PRIVATE_CAR:
-        pts["category"] = 0
+        pts["category"] = 0  # Not in MV_Risk_Factors
         
     if req.valuation_type == ValuationType.MARKET_VALUE:
-        pts["valuation"] = 5
+        pts["valuation"] = 0  # Not in MV_Risk_Factors
     elif req.valuation_type == ValuationType.AGREED_VALUE:
-        pts["valuation"] = 0 # EXPLICIT BAND agreed value
+        pts["valuation"] = 0  # Not in MV_Risk_Factors
         
     if req.vehicle_age <= 10:
-        pts["age"] = 0 # EXPLICIT BAND new vehicle age
+        pts["age"] = 0  # Match MV_Risk_Factors Vehicle Age Low/Med Risk
     else:
-        pts["age"] = 2
+        pts["age"] = 3  # Match MV_Risk_Factors Vehicle Age High Risk
         
     return {"total": sum(pts.values()), "breakdown": pts}
 
@@ -144,16 +161,18 @@ def calculate_usage_score(req: QuoteRequest) -> dict:
     pts = {"mileage": 0, "type": 0}
     
     if req.annual_mileage <= 14999:
-        pts["mileage"] = 0 # EXPLICIT BAND low mileage
+        pts["mileage"] = 0  # Match MV_Risk_Factors Annual Mileage Low Risk
     elif req.annual_mileage <= 30000:
-        pts["mileage"] = 3
+        pts["mileage"] = 1  # Match MV_Risk_Factors Annual Mileage Medium Risk
     else:
-        pts["mileage"] = 6
+        pts["mileage"] = 3  # Match MV_Risk_Factors Annual Mileage High Risk
         
     if req.usage_type == UsageType.PRIVATE:
-        pts["type"] = 0 # EXPLICIT BAND private usage
-    elif req.usage_type in [UsageType.COMMERCIAL, UsageType.EHAILING_COMMERCIAL]:
-        pts["type"] = 4
+        pts["type"] = 0  # Match MV_Risk_Factors Primary Use Low Risk
+    elif req.usage_type == UsageType.COMMERCIAL:
+        pts["type"] = 2  # Match MV_Risk_Factors Primary Use Medium Risk
+    elif req.usage_type == UsageType.EHAILING_COMMERCIAL:
+        pts["type"] = 4  # Match MV_Risk_Factors Primary Use High Risk
         
     return {"total": sum(pts.values()), "breakdown": pts}
 
