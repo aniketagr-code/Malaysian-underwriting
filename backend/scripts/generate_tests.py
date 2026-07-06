@@ -1,16 +1,27 @@
 import pandas as pd
 from backend.app.engine import generate_quote
-from backend.app.schemas import QuoteRequest, Territory, TelematicsRisk, Severity, FloodZone, VehicleCategory, ValuationType, UsageType, NCDPercentage
+from backend.app.schemas import *
 
 def get_variance(row):
+    # Extract Gender and Occupation from dataset if possible
+    gender = Gender.MALE if row.get('Gender') == 'M' else Gender.FEMALE
+    
+    occ_str = str(row.get('Occupation', '')).lower()
+    if 'manual' in occ_str or 'delivery' in occ_str:
+        occ = Occupation.MANUAL
+    elif 'clerical' in occ_str or 'sales' in occ_str:
+        occ = Occupation.CLERICAL
+    else:
+        occ = Occupation.PROFESSIONAL
+
     req = QuoteRequest(
         driver_age=row['Age'],
         traffic_violations=0,
         telematics_risk=TelematicsRisk.LOW,
         ncd_percentage=NCDPercentage.NCD_0,
-        prior_claims_count=row['Claim_Flag'],
+        prior_claims_count=row.get('Claim_Flag', 0),
         average_prior_severity=Severity.LOW,
-        territory=Territory.URBAN_KL_SELANGOR_PENANG_JOHOR if row['State'] in ['Kuala Lumpur', 'Selangor', 'Penang', 'Johor'] else Territory.URBAN_OTHER,
+        territory=Territory.URBAN_KL_SELANGOR_PENANG_JOHOR if row.get('State') in ['Kuala Lumpur', 'Selangor', 'Penang', 'Johor'] else Territory.URBAN_OTHER,
         flood_zone=FloodZone.LOW,
         vehicle_value=row['Sum_Insured_MYR'],
         engine_capacity=row['Engine_CC'],
@@ -21,11 +32,36 @@ def get_variance(row):
         usage_type=UsageType.PRIVATE if row['Vehicle_Use'] == 'PRIVATE' else UsageType.COMMERCIAL,
         windscreen_cover=False,
         ncd_protector=False,
-        special_perils_cover=False
+        special_perils_cover=False,
+        gender=gender,
+        years_licensed=YearsLicensed.FIVE_PLUS,
+        occupation=occ,
+        previous_claims_3yr=PreviousClaims3Yr.ZERO,
+        fault_profile=FaultProfile.NOT_AT_FAULT,
+        fraud_indicators=FraudIndicators.NONE,
+        crime_rate=CrimeRate.LOW,
+        road_type=RoadType.HIGHWAY,
+        seasonal_risk=SeasonalRisk.YEAR_ROUND,
+        modification_status=ModificationStatus.STANDARD,
+        safety_features=SafetyFeatures.ADVANCED,
+        tyre_condition=TyreCondition.GOOD,
+        parking_night=ParkingNight.GARAGED,
+        annual_trips=AnnualTrips.LOW,
+        immobiliser=Immobiliser.FACTORY,
+        gps_tracking=GPSTracking.ACTIVE,
+        alarm_system=AlarmSystem.OEM,
+        excess_chosen=ExcessChosen.HIGH,
+        named_drivers=NamedDrivers.ONE,
+        policy_lapse_history=PolicyLapseHistory.NO_LAPSE,
+        sum_insured_accuracy=SumInsuredAccuracy.ACCURATE,
+        premium_payment=PremiumPayment.ANNUAL
     )
     res = generate_quote(req)
-    # The requirement is: "assert engine output is within a stated tolerance of Final_Premium_MYR"
-    final_prem_engine = res["final_premium"]
+    # Handle dict return
+    if "premium_breakdown" in res:
+        final_prem_engine = res["premium_breakdown"]["total_payable"]
+    else:
+        final_prem_engine = 0
     final_prem_actual = row['Final_Premium_MYR']
     variance = abs(final_prem_engine - final_prem_actual)
     return req, final_prem_engine, final_prem_actual, variance
@@ -48,5 +84,6 @@ print("test_cases = [")
 for idx, row in samples.iterrows():
     req, engine, actual, var = get_variance(row)
     print(f"    # {row['Risk_Category']} Risk, Policy: {row['Policy_ID']}")
-    print(f"    ({req.dict()}, {actual}, {var + 0.1}),")
+    req_dict = req.model_dump()
+    print(f"    ({req_dict}, {actual}, {actual * 0.15}),")
 print("]")

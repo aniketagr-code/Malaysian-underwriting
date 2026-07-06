@@ -1,5 +1,5 @@
 """
-Malaysia Motor Insurance Underwriting Engine (Scorecard v1.1.0)
+Malaysia Motor Insurance Underwriting Engine (Scorecard v1.2.0)
 
 CRITICAL ACTUARIAL FIXES IMPLEMENTED:
 1. NCD vs. E-Hailing Surcharge Interaction: E-hailing surcharge is applied AFTER the NCD deduction, 
@@ -11,168 +11,310 @@ CRITICAL ACTUARIAL FIXES IMPLEMENTED:
 4. Sequence Lock: Risk Loading -> NCD -> E-Hailing -> Floor -> Add-ons.
 5. Scorecard v1.2.0 Updates: Aligned scoring bands with MV_Risk_Factors dataset, refactored frequency/severity calculation, mapped exact point values.
 
-SCHEMA GAPS IDENTIFIED:
-The following underwriting factors are in the MV_Risk_Factors matrix but lack corresponding fields in schemas.py:
-- Gender (required for Gender + Age combo)
-- Years Licensed
-- Occupation
-- Previous Claims (3yr) (prior_claims_count lacks explicit time horizon)
-- Engine CC (present for premium, but not used in risk scorecard)
-- Modification Status
-- Safety Features
-- Tyre Condition
-- Parking (night)
-- Annual Trips
-- Fault Profile
-- Fraud Indicators
-- Crime Rate (area)
-- Road Type
-- Seasonal Risk
-- Immobiliser
-- GPS Tracking
-- Alarm System
-- Excess Chosen
-- Named Drivers
-- Policy Lapse History
-- Sum Insured Accuracy
-- Premium Payment (Frequency)
+SCHEMA COMPLETE (23/23 fields present). VALIDATION STATUS: 2/23 factors (Gender, Occupation) validated against MV_Policies; 21/23 factors have no historical data and are structurally unvalidated in this backtest.
 """
-from .schemas import QuoteRequest, Territory, TelematicsRisk, Severity, FloodZone, VehicleCategory, ValuationType, UsageType
+from .schemas import *
 from .config import PREMIUM_FLOOR, SST_RATE, WINDSCREEN_FLAT, FLOOD_RATE, EHAILING_SURCHARGE, NCD_PROTECTOR_LOADING, STAMP_DUTY, CC_RATES_PENINSULAR, ADDITIONAL_VALUE_RATE_PENINSULAR, CC_RATES_EAST_MALAYSIA, ADDITIONAL_VALUE_RATE_EAST_MALAYSIA, SCORECARD_VERSION
 import math
 
 def calculate_driver_score(req: QuoteRequest) -> dict:
-    pts = {"age": 0, "violations": 0, "telematics": 0}
+    pts = {"age": 0, "gender_age": 0, "years_licensed": 0, "occupation": 0, "annual_mileage": 0, "previous_claims_3yr": 0, "traffic_violations": 0}
     
     # Age
     if req.driver_age <= 25:
-        pts["age"] = 4  # Match MV_Risk_Factors Driver Age (High Risk <21 / Low 25-55)
-    elif req.driver_age <= 30:
-        pts["age"] = 0  # Match MV_Risk_Factors Low Risk (25-55)
+        pts["age"] = 4
     elif req.driver_age <= 60:
-        pts["age"] = 0  # Match MV_Risk_Factors Low Risk (25-55) / Med (56-65)
+        pts["age"] = 0
     elif req.driver_age <= 75:
-        pts["age"] = 2  # Match MV_Risk_Factors Medium Risk (56-65) / High (>65)
+        pts["age"] = 2
     else:
-        pts["age"] = 4  # Match MV_Risk_Factors High Risk (>65)
+        pts["age"] = 4
         
-    # Violations
-    if req.traffic_violations == 0:
-        pts["violations"] = 0  # Match MV_Risk_Factors Traffic Violations Low Risk
-    elif req.traffic_violations == 1:
-        pts["violations"] = 1  # Match MV_Risk_Factors Traffic Violations Medium Risk
+    # Gender + Age combo
+    if req.gender == Gender.MALE:
+        if req.driver_age < 18:
+            pts["gender_age"] = 2
+        elif req.driver_age <= 24:
+            pts["gender_age"] = 1
+        elif req.driver_age <= 55:
+            pts["gender_age"] = 0
+        else:
+            pts["gender_age"] = 0
     else:
-        pts["violations"] = 3  # Match MV_Risk_Factors Traffic Violations High Risk
+        if req.driver_age < 20:
+            pts["gender_age"] = 2
+        else:
+            pts["gender_age"] = 0
+            
+    # Years Licensed
+    if req.years_licensed == YearsLicensed.LESS_THAN_2:
+        pts["years_licensed"] = 3
+    elif req.years_licensed == YearsLicensed.TWO_TO_FOUR:
+        pts["years_licensed"] = 1
+    else:
+        pts["years_licensed"] = 0
         
-    # Telematics
-    if req.telematics_risk == TelematicsRisk.LOW:
-        pts["telematics"] = 0
-    elif req.telematics_risk == TelematicsRisk.MED:
-        pts["telematics"] = 0  # Not in MV_Risk_Factors, assigned 0
-    elif req.telematics_risk == TelematicsRisk.HIGH:
-        pts["telematics"] = 0  # Not in MV_Risk_Factors, assigned 0
+    # Occupation
+    if req.occupation == Occupation.MANUAL:
+        pts["occupation"] = 3
+    elif req.occupation == Occupation.CLERICAL:
+        pts["occupation"] = 1
+    else:
+        pts["occupation"] = 0
+        
+    # Annual Mileage
+    if req.annual_mileage > 30000:
+        pts["annual_mileage"] = 3
+    elif req.annual_mileage >= 15000:
+        pts["annual_mileage"] = 1
+    else:
+        pts["annual_mileage"] = 0
+        
+    # Previous Claims (3yr)
+    if req.previous_claims_3yr == PreviousClaims3Yr.TWO_PLUS:
+        pts["previous_claims_3yr"] = 4
+    elif req.previous_claims_3yr == PreviousClaims3Yr.ONE:
+        pts["previous_claims_3yr"] = 2
+    else:
+        pts["previous_claims_3yr"] = 0
+        
+    # Traffic Violations
+    if req.traffic_violations >= 3:
+        pts["traffic_violations"] = 3
+    elif req.traffic_violations >= 1:
+        pts["traffic_violations"] = 1
+    else:
+        pts["traffic_violations"] = 0
+        
+    return {"total": sum(pts.values()), "breakdown": pts}
+
+def calculate_vehicle_score(req: QuoteRequest) -> dict:
+    pts = {"engine_cc": 0, "vehicle_age": 0, "vehicle_value": 0, "modification_status": 0, "safety_features": 0, "tyre_condition": 0}
+    
+    # Engine CC
+    if req.engine_capacity > 2000:
+        pts["engine_cc"] = 3
+    elif req.engine_capacity >= 1300:
+        pts["engine_cc"] = 1
+    else:
+        pts["engine_cc"] = 0
+        
+    # Vehicle Age
+    if req.vehicle_age > 10:
+        pts["vehicle_age"] = 3
+    elif req.vehicle_age >= 5:
+        pts["vehicle_age"] = 1
+    else:
+        pts["vehicle_age"] = 0
+        
+    # Vehicle Value
+    if req.vehicle_value > 150000:
+        pts["vehicle_value"] = 3
+    elif req.vehicle_value >= 50000:
+        pts["vehicle_value"] = 1
+    else:
+        pts["vehicle_value"] = 0
+        
+    # Modification Status
+    if req.modification_status == ModificationStatus.MAJOR:
+        pts["modification_status"] = 4
+    elif req.modification_status == ModificationStatus.MINOR:
+        pts["modification_status"] = 2
+    else:
+        pts["modification_status"] = 0
+        
+    # Safety Features
+    if req.safety_features == SafetyFeatures.MINIMAL:
+        pts["safety_features"] = 3
+    elif req.safety_features == SafetyFeatures.SOME:
+        pts["safety_features"] = 1
+    else:
+        pts["safety_features"] = 0
+        
+    # Tyre Condition
+    if req.tyre_condition == TyreCondition.WORN:
+        pts["tyre_condition"] = 3
+    elif req.tyre_condition == TyreCondition.MODERATE:
+        pts["tyre_condition"] = 1
+    else:
+        pts["tyre_condition"] = 0
+        
+    return {"total": sum(pts.values()), "breakdown": pts}
+
+def calculate_usage_score(req: QuoteRequest) -> dict:
+    pts = {"primary_use": 0, "parking_night": 0, "annual_trips": 0}
+    
+    # Primary Use
+    if req.usage_type == UsageType.EHAILING_COMMERCIAL:
+        pts["primary_use"] = 4
+    elif req.usage_type == UsageType.COMMERCIAL:
+        pts["primary_use"] = 2
+    else:
+        pts["primary_use"] = 0
+        
+    # Parking Night
+    if req.parking_night == ParkingNight.STREET:
+        pts["parking_night"] = 3
+    elif req.parking_night == ParkingNight.DRIVEWAY:
+        pts["parking_night"] = 1
+    else:
+        pts["parking_night"] = 0
+        
+    # Annual Trips
+    if req.annual_trips == AnnualTrips.HIGH:
+        pts["annual_trips"] = 2
+    elif req.annual_trips == AnnualTrips.MEDIUM:
+        pts["annual_trips"] = 1
+    else:
+        pts["annual_trips"] = 0
         
     return {"total": sum(pts.values()), "breakdown": pts}
 
 def calculate_claims_score(req: QuoteRequest) -> dict:
-    pts = {"ncd_stepback": 0, "frequency_severity": 0}
+    pts = {"frequency_severity": 0, "ncd_stepback": 0, "fault_profile": 0, "fraud_indicators": 0}
     
     if req.ncd_protector:
-        return {"total": 0, "breakdown": {"ncd_stepback": 0, "frequency_severity": 0}}
+        return {"total": 0, "breakdown": {"frequency_severity": 0, "ncd_stepback": 0, "fault_profile": 0, "fraud_indicators": 0}}
         
-    # NCD Step-back proxy
+    # Frequency vs Severity math
+    if req.prior_claims_count == 0:
+        pts["frequency_severity"] = 0
+    else:
+        freq_pts = 4 if req.prior_claims_count >= 2 else 1
+        sev_pts = 3 if req.average_prior_severity == Severity.HIGH else 2 if req.average_prior_severity == Severity.MED else 1
+        pts["frequency_severity"] = freq_pts + sev_pts
+        
+    # NCD Step-back
     if req.ncd_percentage == 0.0:
-        pts["ncd_stepback"] = 4  # Match MV_Risk_Factors implied frequency risk
+        pts["ncd_stepback"] = 4
     elif req.ncd_percentage <= 25.0:
         pts["ncd_stepback"] = 3
     elif req.ncd_percentage <= 30.0:
         pts["ncd_stepback"] = 2
     elif req.ncd_percentage <= 38.33:
         pts["ncd_stepback"] = 1
-    elif req.ncd_percentage <= 45.0:
+    else:
         pts["ncd_stepback"] = 0
-    elif req.ncd_percentage == 55.0:
-        pts["ncd_stepback"] = 0  # Match MV_Risk_Factors implied low risk
- 
-    # Frequency vs Severity math
-    if req.prior_claims_count == 0:
-        pts["frequency_severity"] = 0  # Match MV_Risk_Factors Claim Frequency Low Risk
-    else:
-        # Match MV_Risk_Factors Claim Frequency
-        freq_pts = 1 if req.prior_claims_count == 1 else 4
         
-        # Match MV_Risk_Factors Severity History
-        sev_pts = 0
-        if req.average_prior_severity == Severity.LOW:
-            sev_pts = 1
-        elif req.average_prior_severity == Severity.MED:
-            sev_pts = 2
-        elif req.average_prior_severity == Severity.HIGH:
-            sev_pts = 3
-            
-        pts["frequency_severity"] = freq_pts + sev_pts
+    # Fault Profile
+    if req.fault_profile == FaultProfile.AT_FAULT:
+        pts["fault_profile"] = 3
+    elif req.fault_profile == FaultProfile.PARTIAL:
+        pts["fault_profile"] = 1
+    else:
+        pts["fault_profile"] = 0
+        
+    # Fraud Indicators
+    if req.fraud_indicators == FraudIndicators.SUSPICIOUS:
+        pts["fraud_indicators"] = 4
+    elif req.fraud_indicators == FraudIndicators.MINOR:
+        pts["fraud_indicators"] = 2
+    else:
+        pts["fraud_indicators"] = 0
         
     return {"total": sum(pts.values()), "breakdown": pts}
 
-def calculate_geographic_score(req: QuoteRequest) -> dict:
-    pts = {"territory": 0, "flood": 0}
+def calculate_environmental_score(req: QuoteRequest) -> dict:
+    pts = {"flood_zone": 0, "crime_rate": 0, "road_type": 0, "seasonal_risk": 0, "territory": 0}
     
-    if req.territory == Territory.URBAN_KL_SELANGOR_PENANG_JOHOR:
-        pts["territory"] = 3  # Match MV_Risk_Factors Geographic Area High Risk
-    elif req.territory == Territory.URBAN_OTHER:
-        pts["territory"] = 2  # Match MV_Risk_Factors Geographic Area Medium Risk
-    elif req.territory == Territory.RURAL_WEST_MALAYSIA:
-        pts["territory"] = 0  # Match MV_Risk_Factors Geographic Area Low Risk
-    elif req.territory == Territory.RURAL_EAST_MALAYSIA:
-        pts["territory"] = 0  # Match MV_Risk_Factors Geographic Area Low Risk
-        
-    if req.flood_zone == FloodZone.LOW:
-        pts["flood"] = 0  # Match MV_Risk_Factors Flood Zone Low Risk
+    if req.flood_zone == FloodZone.HIGH:
+        pts["flood_zone"] = 3
     elif req.flood_zone == FloodZone.MED:
-        pts["flood"] = 1  # Match MV_Risk_Factors Flood Zone Medium Risk
-    elif req.flood_zone == FloodZone.HIGH:
-        pts["flood"] = 3  # Match MV_Risk_Factors Flood Zone High Risk
+        pts["flood_zone"] = 1
+    else:
+        pts["flood_zone"] = 0
+        
+    if req.crime_rate == CrimeRate.HIGH:
+        pts["crime_rate"] = 3
+    elif req.crime_rate == CrimeRate.MEDIUM:
+        pts["crime_rate"] = 1
+    else:
+        pts["crime_rate"] = 0
+        
+    if req.road_type == RoadType.RURAL:
+        pts["road_type"] = 2
+    elif req.road_type == RoadType.URBAN:
+        pts["road_type"] = 1
+    else:
+        pts["road_type"] = 0
+        
+    if req.seasonal_risk == SeasonalRisk.HIGH:
+        pts["seasonal_risk"] = 2
+    elif req.seasonal_risk == SeasonalRisk.MONSOON:
+        pts["seasonal_risk"] = 1
+    else:
+        pts["seasonal_risk"] = 0
+        
+    if req.territory == Territory.URBAN_KL_SELANGOR_PENANG_JOHOR:
+        pts["territory"] = 3
+    elif req.territory == Territory.URBAN_OTHER:
+        pts["territory"] = 2
+    else:
+        pts["territory"] = 0
         
     return {"total": sum(pts.values()), "breakdown": pts}
 
-def calculate_vehicle_score(req: QuoteRequest) -> dict:
-    pts = {"category": 0, "valuation": 0, "age": 0}
+def calculate_security_score(req: QuoteRequest) -> dict:
+    pts = {"immobiliser": 0, "gps_tracking": 0, "alarm_system": 0}
     
-    if req.vehicle_category == VehicleCategory.LUXURY_CAR:
-        pts["category"] = 0  # Not in MV_Risk_Factors
-    elif req.vehicle_category == VehicleCategory.COMMERCIAL_PICKUP:
-        pts["category"] = 0  # Not in MV_Risk_Factors
-    elif req.vehicle_category == VehicleCategory.PRIVATE_CAR:
-        pts["category"] = 0  # Not in MV_Risk_Factors
-        
-    if req.valuation_type == ValuationType.MARKET_VALUE:
-        pts["valuation"] = 0  # Not in MV_Risk_Factors
-    elif req.valuation_type == ValuationType.AGREED_VALUE:
-        pts["valuation"] = 0  # Not in MV_Risk_Factors
-        
-    if req.vehicle_age <= 10:
-        pts["age"] = 0  # Match MV_Risk_Factors Vehicle Age Low/Med Risk
+    if req.immobiliser == Immobiliser.NONE:
+        pts["immobiliser"] = 2
+    elif req.immobiliser == Immobiliser.AFTERMARKET:
+        pts["immobiliser"] = 1
     else:
-        pts["age"] = 3  # Match MV_Risk_Factors Vehicle Age High Risk
+        pts["immobiliser"] = 0
+        
+    if req.gps_tracking == GPSTracking.NONE:
+        pts["gps_tracking"] = 2
+    elif req.gps_tracking == GPSTracking.PASSIVE:
+        pts["gps_tracking"] = 1
+    else:
+        pts["gps_tracking"] = 0
+        
+    if req.alarm_system == AlarmSystem.NONE:
+        pts["alarm_system"] = 2
+    elif req.alarm_system == AlarmSystem.AFTERMARKET:
+        pts["alarm_system"] = 1
+    else:
+        pts["alarm_system"] = 0
         
     return {"total": sum(pts.values()), "breakdown": pts}
 
-def calculate_usage_score(req: QuoteRequest) -> dict:
-    pts = {"mileage": 0, "type": 0}
+def calculate_policy_score(req: QuoteRequest) -> dict:
+    pts = {"excess_chosen": 0, "named_drivers": 0, "policy_lapse_history": 0, "sum_insured_accuracy": 0, "premium_payment": 0}
     
-    if req.annual_mileage <= 14999:
-        pts["mileage"] = 0  # Match MV_Risk_Factors Annual Mileage Low Risk
-    elif req.annual_mileage <= 30000:
-        pts["mileage"] = 1  # Match MV_Risk_Factors Annual Mileage Medium Risk
+    if req.excess_chosen == ExcessChosen.MINIMUM:
+        pts["excess_chosen"] = 2
+    elif req.excess_chosen == ExcessChosen.STANDARD:
+        pts["excess_chosen"] = 1
     else:
-        pts["mileage"] = 3  # Match MV_Risk_Factors Annual Mileage High Risk
+        pts["excess_chosen"] = 0
         
-    if req.usage_type == UsageType.PRIVATE:
-        pts["type"] = 0  # Match MV_Risk_Factors Primary Use Low Risk
-    elif req.usage_type == UsageType.COMMERCIAL:
-        pts["type"] = 2  # Match MV_Risk_Factors Primary Use Medium Risk
-    elif req.usage_type == UsageType.EHAILING_COMMERCIAL:
-        pts["type"] = 4  # Match MV_Risk_Factors Primary Use High Risk
+    if req.named_drivers == NamedDrivers.FOUR_PLUS:
+        pts["named_drivers"] = 2
+    elif req.named_drivers == NamedDrivers.TWO_TO_THREE:
+        pts["named_drivers"] = 1
+    else:
+        pts["named_drivers"] = 0
+        
+    if req.policy_lapse_history == PolicyLapseHistory.TWO_PLUS:
+        pts["policy_lapse_history"] = 3
+    elif req.policy_lapse_history == PolicyLapseHistory.ONE_LAPSE:
+        pts["policy_lapse_history"] = 1
+    else:
+        pts["policy_lapse_history"] = 0
+        
+    if req.sum_insured_accuracy == SumInsuredAccuracy.UNDERINSURED:
+        pts["sum_insured_accuracy"] = 3
+    elif req.sum_insured_accuracy == SumInsuredAccuracy.PLUS_MINUS_10:
+        pts["sum_insured_accuracy"] = 1
+    else:
+        pts["sum_insured_accuracy"] = 0
+        
+    if req.premium_payment == PremiumPayment.MONTHLY:
+        pts["premium_payment"] = 1
+    else:
+        pts["premium_payment"] = 0
         
     return {"total": sum(pts.values()), "breakdown": pts}
 
@@ -181,18 +323,22 @@ def generate_quote(req: QuoteRequest):
         "Standard Own-Damage Excess: RM200": True
     }
     d_score = calculate_driver_score(req)
-    c_score = calculate_claims_score(req)
-    g_score = calculate_geographic_score(req)
     v_score = calculate_vehicle_score(req)
     u_score = calculate_usage_score(req)
+    c_score = calculate_claims_score(req)
+    e_score = calculate_environmental_score(req)
+    s_score = calculate_security_score(req)
+    p_score = calculate_policy_score(req)
     
     # Calculate Concentration Penalty (GLM interaction terms proxy)
     domains = {
-        "driver": {"val": d_score["total"], "max": 30},
-        "claims": {"val": c_score["total"], "max": 25},
-        "geo": {"val": g_score["total"], "max": 20},
-        "vehicle": {"val": v_score["total"], "max": 15},
-        "usage": {"val": u_score["total"], "max": 10}
+        "driver": {"val": d_score["total"], "max": 22},
+        "vehicle": {"val": v_score["total"], "max": 19},
+        "usage": {"val": u_score["total"], "max": 9},
+        "claims": {"val": c_score["total"], "max": 18},
+        "environmental": {"val": e_score["total"], "max": 13},
+        "security": {"val": s_score["total"], "max": 6},
+        "policy": {"val": p_score["total"], "max": 11}
     }
     
     base_composite_score = sum(d["val"] for d in domains.values())
@@ -200,7 +346,7 @@ def generate_quote(req: QuoteRequest):
     concentration_penalty = 0
     if base_composite_score > 60:
         for d in domains.values():
-            if d["val"] / d["max"] > 0.70:
+            if d["max"] > 0 and d["val"] / d["max"] > 0.70:
                 concentration_penalty = 5
                 break
                 
@@ -208,8 +354,6 @@ def generate_quote(req: QuoteRequest):
     
     # Reinsurance Referral
     reinsurance_referral = False
-    # Explicit Rule: E-Hailing is excluded from individual reinsurance trigger (handled via fleet-level cession).
-    # Commercial triggers individually. High-value E-Hailing (>RM150k) still triggers because of the value threshold.
     if req.vehicle_value > 150000 or req.usage_type == UsageType.COMMERCIAL:
         reinsurance_referral = True
         
@@ -236,7 +380,6 @@ def generate_quote(req: QuoteRequest):
     if req.vehicle_value <= 1000:
         base_premium = first_1000_rate
     else:
-        # Note: max(0, ...) prevents negative blocks if vehicle_value < 1000
         additional_value = max(0, req.vehicle_value - 1000)
         blocks = math.ceil(additional_value / 1000.0)
         base_premium = first_1000_rate + (blocks * additional_rate)
@@ -253,7 +396,7 @@ def generate_quote(req: QuoteRequest):
     risk_loading_amount = round(base_premium * risk_loading_pct, 2)
     gross_base_premium = round(base_premium + risk_loading_amount, 2)
     
-    # STEP 3: NCD DEDUCTION (Private Motor Discount Only)
+    # STEP 3: NCD DEDUCTION
     actual_ncd_percentage = float(req.ncd_percentage)
     
     if req.prior_claims_count > 0 and not req.ncd_protector:
@@ -273,7 +416,7 @@ def generate_quote(req: QuoteRequest):
         core_premium_post_floor = PREMIUM_FLOOR
         rate_floor_triggered = True
         
-    # STEP 5: OPTIONAL ADD-ONS (Separate Peril Pricing)
+    # STEP 5: OPTIONAL ADD-ONS
     flood_endorsement = 0.0
     has_flood = req.special_perils_cover
     if req.flood_zone == FloodZone.HIGH:
@@ -305,10 +448,12 @@ def generate_quote(req: QuoteRequest):
         "composite_score": composite_score,
         "score_breakdown": {
             "driver": d_score["breakdown"],
-            "claims": c_score["breakdown"],
-            "geographic": g_score["breakdown"],
             "vehicle": v_score["breakdown"],
             "usage": u_score["breakdown"],
+            "claims": c_score["breakdown"],
+            "environmental": e_score["breakdown"],
+            "security": s_score["breakdown"],
+            "policy": p_score["breakdown"],
             "concentration_penalty": concentration_penalty
         },
         "reinsurance_referral": reinsurance_referral,
