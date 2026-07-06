@@ -34,7 +34,7 @@ def map_row_to_quote_request(row):
     )
 
 def run_validation():
-    file_path = r'C:\Users\lenovo\Downloads\BITs_Sample_Data_Workbook.xlsx'
+    file_path = 'backend/data/BITs_Sample_Data_Workbook.xlsx'
     policies = pd.read_excel(file_path, sheet_name='MV_Policies', header=3)
     claims = pd.read_excel(file_path, sheet_name='MV_Claims', header=3)
     

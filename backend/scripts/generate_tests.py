@@ -30,7 +30,7 @@ def get_variance(row):
     variance = abs(final_prem_engine - final_prem_actual)
     return req, final_prem_engine, final_prem_actual, variance
 
-file_path = r'C:\Users\lenovo\Downloads\BITs_Sample_Data_Workbook.xlsx'
+file_path = 'backend/data/BITs_Sample_Data_Workbook.xlsx'
 df = pd.read_excel(file_path, sheet_name='MV_Policies', header=3)
 # We need claim flags
 claims = pd.read_excel(file_path, sheet_name='MV_Claims', header=3)

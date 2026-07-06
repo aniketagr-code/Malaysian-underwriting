@@ -45,9 +45,12 @@ def test_real_policies(req_dict, expected_premium, tolerance):
     
     actual_premium = res["premium_breakdown"]["total_payable"]
     variance = abs(actual_premium - expected_premium)
+    variance_pct = (variance / expected_premium) * 100
     
-    # Assert engine output is within a stated tolerance of Final_Premium_MYR.
-    # The actual variance exceeded a reasonable tight tolerance because the engine
-    # doesn't perfectly match the data due to schema gaps and simplifications, 
-    # so we assert against the real observed variance.
-    assert variance <= tolerance, f"Variance {variance} exceeded tolerance {tolerance}"
+    tolerance_strict = expected_premium * 0.05
+    
+    if variance > tolerance_strict:
+        pytest.fail(
+            f"Engine off by {variance_pct:.1f}% (Variance RM {variance:.2f} vs expected RM {expected_premium:.2f}). "
+            f"Scorecard schema gaps prevent accurate pricing."
+        )

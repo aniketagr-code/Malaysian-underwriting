@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 import numpy as np
 
-file_path = r'C:\Users\lenovo\Downloads\BITs_Sample_Data_Workbook.xlsx'
+file_path = 'backend/data/BITs_Sample_Data_Workbook.xlsx'
 df = pd.read_excel(file_path, sheet_name='MV_Policies', header=3)
 df['Engine_CC'] = pd.to_numeric(df['Engine_CC'], errors='coerce')
 df['Sum_Insured_MYR'] = pd.to_numeric(df['Sum_Insured_MYR'], errors='coerce')

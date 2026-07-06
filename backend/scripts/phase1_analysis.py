@@ -1,6 +1,6 @@
 import pandas as pd
 
-file_path = r'C:\Users\lenovo\Downloads\BITs_Sample_Data_Workbook.xlsx'
+file_path = 'backend/data/BITs_Sample_Data_Workbook.xlsx'
 risk_factors = pd.read_excel(file_path, sheet_name='MV_Risk_Factors', header=3)
 
 print("=== 2. MV_Risk_Factors ===")
