@@ -35,29 +35,95 @@ graph TD
 
 ##  Getting Started
 
-### Prerequisites
-- Python 3.9+
-- A modern web browser
+## Prerequisites
 
-### 1. Start the Backend API
-Navigate to the `backend` directory, activate your virtual environment (if you are using one), and launch the FastAPI server using Uvicorn. We run on Port 8015 to prevent any ghost process conflicts.
+Before running the project, ensure you have:
+
+- Python 3.9 or later installed
+- A modern web browser (Chrome, Edge, or Firefox)
+
+Verify your Python installation:
+
+```bash
+python --version
+```
+
+---
+
+## 1. Start the Backend API
+
+Open the project in Visual Studio Code and navigate to the backend directory:
 
 ```bash
 cd backend
-# Windows
+```
+
+Start the FastAPI server.
+
+### Windows (using the project virtual environment)
+
+```bash
 ..\venv\Scripts\uvicorn app.main:app --port 8015 --reload
-# Mac/Linux
+```
+
+### macOS / Linux
+
+```bash
 ../venv/bin/uvicorn app.main:app --port 8015 --reload
 ```
-*The API will now be listening at `http://localhost:8015/quote`.*
 
-### 2. Start the Frontend Application
-Open a new terminal window at the **root** of the repository (not inside `/frontend`), and spin up a lightweight HTTP server to serve the assets.
+> **Note:** If you are not using the project's virtual environment, you can instead run:
+
+```bash
+python -m uvicorn app.main:app --port 8015 --reload
+```
+
+If the server starts successfully, you should see:
+
+```text
+INFO: Uvicorn running on http://127.0.0.1:8015
+INFO: Application startup complete.
+```
+
+Keep this terminal running while using the application.
+
+---
+
+## 2. Start the Frontend Application
+
+Open a **new terminal** (leave the backend terminal running) and navigate to the project root directory (the folder containing both `backend` and `frontend`).
+
+Run:
 
 ```bash
 python -m http.server 8080
 ```
-*Navigate your web browser to `http://localhost:8080/frontend/index.html` to access the dashboard.*
+
+If successful, the terminal will display:
+
+```text
+Serving HTTP on 0.0.0.0 port 8080
+```
+
+Keep this terminal running while using the application.
+
+---
+
+## 3. Launch the Application
+
+Open your web browser and navigate to:
+
+```
+http://localhost:8080/frontend/index.html
+```
+
+The underwriting dashboard should now load successfully.
+
+---
+
+## Stopping the Application
+
+When you are finished using the application, press **Ctrl + C** in both terminal windows to stop the backend and frontend servers.
 
 ##  Core Underwriting Logic
 
