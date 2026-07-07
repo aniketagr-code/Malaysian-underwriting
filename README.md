@@ -34,82 +34,98 @@ graph TD
 ```
 
 ##  Getting Started
+# Getting Started
 
 ## Prerequisites
 
-Before running the project, ensure you have:
+Before running the project, ensure the following software is installed:
 
-- Python 3.9 or later installed
+- Python 3.9 or later
 - A modern web browser (Chrome, Edge, or Firefox)
 
-Verify your Python installation:
+Verify that Python is installed by running:
 
 ```bash
 python --version
 ```
 
+If Python is not installed, download it from:
+https://www.python.org/downloads/
+
 ---
 
-## 1. Start the Backend API
+## 1. Clone or Download the Project
 
-Open the project in Visual Studio Code and navigate to the backend directory:
+Clone the repository or download it as a ZIP file and extract it.
+
+Open the project folder in Visual Studio Code.
+
+---
+
+## 2. Install Dependencies
+
+Open a terminal in the project root directory and navigate to the backend folder:
 
 ```bash
 cd backend
 ```
 
-Start the FastAPI server.
-
-### Windows (using the project virtual environment)
+Install the required Python packages:
 
 ```bash
-..\venv\Scripts\uvicorn app.main:app --port 8015 --reload
+python -m pip install -r requirements.txt
 ```
 
-### macOS / Linux
+Wait until all packages have been installed successfully.
 
-```bash
-../venv/bin/uvicorn app.main:app --port 8015 --reload
-```
+---
 
-> **Note:** If you are not using the project's virtual environment, you can instead run:
+## 3. Start the Backend API
+
+From the `backend` folder, start the FastAPI server:
 
 ```bash
 python -m uvicorn app.main:app --port 8015 --reload
 ```
 
-If the server starts successfully, you should see:
+If the backend starts successfully, you should see output similar to:
 
 ```text
 INFO: Uvicorn running on http://127.0.0.1:8015
 INFO: Application startup complete.
 ```
 
-Keep this terminal running while using the application.
+Leave this terminal running.
+
+The backend API is now available at:
+
+```
+http://localhost:8015/quote
+```
 
 ---
 
-## 2. Start the Frontend Application
+## 4. Start the Frontend
 
-Open a **new terminal** (leave the backend terminal running) and navigate to the project root directory (the folder containing both `backend` and `frontend`).
+Open a **new terminal** (do not close the backend terminal).
 
-Run:
+Navigate to the project root directory (the folder containing both `backend` and `frontend`) and run:
 
 ```bash
 python -m http.server 8080
 ```
 
-If successful, the terminal will display:
+If successful, you should see:
 
 ```text
 Serving HTTP on 0.0.0.0 port 8080
 ```
 
-Keep this terminal running while using the application.
+Leave this terminal running.
 
 ---
 
-## 3. Launch the Application
+## 5. Launch the Application
 
 Open your web browser and navigate to:
 
@@ -123,7 +139,53 @@ The underwriting dashboard should now load successfully.
 
 ## Stopping the Application
 
-When you are finished using the application, press **Ctrl + C** in both terminal windows to stop the backend and frontend servers.
+When you are finished using the application:
+
+- Return to the backend terminal and press **Ctrl + C**.
+- Return to the frontend terminal and press **Ctrl + C**.
+
+This safely stops both servers.
+
+---
+
+## Troubleshooting
+
+### `'python' is not recognized`
+
+Python is either not installed or not added to your system PATH.
+
+Reinstall Python from:
+
+https://www.python.org/downloads/
+
+and ensure **"Add Python to PATH"** is selected during installation.
+
+---
+
+### `No module named 'app'`
+
+Ensure you are inside the `backend` directory before starting the backend server:
+
+```bash
+cd backend
+python -m uvicorn app.main:app --port 8015 --reload
+```
+
+---
+
+### `ModuleNotFoundError` or missing packages
+
+Install the project dependencies:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+---
+
+### Frontend opens but no results are returned
+
+Ensure the backend server is still running on port **8015** before opening the frontend.
 
 ##  Core Underwriting Logic
 
