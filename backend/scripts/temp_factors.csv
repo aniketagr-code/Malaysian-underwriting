@@ -1,0 +1,41 @@
+Category,Risk Factor,Low Risk,Medium Risk,High Risk,Score Range,Underwriting Action
+Driver,Driver Age (years),25–55,21–24 or 56–65,<21 or >65,0–4,Age <25: +15%; <20: +35%
+Driver,Gender + Age combo,M 25–55,M 18–24,M <18 or F<20,0–2,Young male: highest risk
+Driver,Years Licensed,5+ years,2–4 years,<2 years,0–3,< 2 years: +20% loading
+Driver,Occupation,Professional/Exec,Clerical/Sales,Manual/Delivery,0–3,Delivery/Grab: commercial rate
+Driver,Annual Mileage (km),"<15,000","15,000–30,000",">30,000",0–3,High mileage: frequency loading
+Driver,Previous Claims (3yr),0 claims,1 claim,2+ claims,0–4,2+ claims: may decline renewal
+Driver,Traffic Violations,0 in 3yr,1–2 in 3yr,3+ in 3yr,0–3,3+ violations: 25% loading
+Vehicle,Engine CC,"<1,300cc","1,300–2,000cc",">2,000cc",0–3,>2500cc: sport loading applies
+Vehicle,Vehicle Age,<5 years,5–10 years,>10 years,0–3,Old vehicle: higher repair cost
+Vehicle,Vehicle Value (MYR),"<50,000","50,000–150,000",">150,000",0–3,High-value: specialist parts risk
+Vehicle,Modification Status,Stock/standard,Minor mods,Major mods,0–4,Major mods: underwriting referral
+Vehicle,Safety Features,"ADAS, AEB, ESC",Some safety,Minimal,0–3,ADAS discount up to −10%
+Vehicle,Tyre Condition,New/good,Moderate,Worn/illegal,0–3,Worn tyres: void cover
+Usage,Primary Use,Private commute,Business use,Hire/reward,0–4,Hire/reward: commercial policy
+Usage,Parking (night),Garaged,Driveway/carpark,Street parking,0–3,Street: theft +15%
+Usage,Geographic Area,Rural/suburban,City,High-theft zone,0–3,Kuala Lumpur city +10%
+Usage,Annual Trips,"<5,000","5,000–10,000",">10,000",0–2,High trip frequency: OD loading
+Claims History,Claim Frequency (5yr),0,1,2+,0–4,2+ at-fault: decline or load +30%
+Claims History,Severity History,"Low (<5,000)",Med (5–20k),High (>20k),0–3,Repeat large claims: review
+Claims History,Fault Profile,Not at fault,Partial fault,At fault,0–3,At-fault history: key signal
+Claims History,Fraud Indicators,,Minor,Suspicious,0–4,Suspicious: referral to SIU
+Environmental,Flood Zone,Low risk,Medium risk,High flood zone,0–3,Flood zone: named perils add-on
+Environmental,Crime Rate (area),Low,Medium,High,0–3,High-crime: theft + VB loading
+Environmental,Road Type,Highway primary,Urban mixed,Rural/unlit,0–2,Rural unlit: night risk
+Environmental,Seasonal Risk,Year-round,Monsoon seasonal,High exposure,0–2,E-coast monsoon: Oct–Feb
+Security,Immobiliser,Factory fitted,Aftermarket,,0–2,No immobiliser: +15% theft
+Security,GPS Tracking,Active tracking,Passive,,0–2,Active GPS: −5% discount
+Security,Alarm System,OEM alarm,Aftermarket,,0–2,
+Policy,Excess Chosen,"High (>1,000)",Standard,Minimum,0–2,Low excess = higher moral hazard
+Policy,Named Drivers,1 (owner only),2–3,4+,0–2,Many young named: reload
+Policy,Policy Lapse History,No lapse,1 lapse,2+ lapses,0–3,Lapse: lose NCD continuity
+Policy,Sum Insured Accuracy,Accurate,±10%,Underinsured >10%,0–3,Underinsurance: avg condition
+Policy,Premium Payment,Annual full,Semi-annual,Monthly,0–1,Monthly: admin loading
+,,,,,,
+,,,,,,
+SCORE INTERPRETATION & UNDERWRITING ACTIONS,,,,,,
+1–8,LOW,GREEN,No loading. Standard market terms. May qualify for loyalty discount.,,,
+9–16,MEDIUM,AMBER,"Standard terms. No loading unless specific factors triggered (e.g. mods, young driver).",,,
+17–20,HIGH,RED,Refer to underwriter. 30% premium loading may apply. Additional conditions possible.,,,
+21–25,CRITICAL,DARK RED,Senior underwriter referral required. 30–50% loading or decline to quote.,,,

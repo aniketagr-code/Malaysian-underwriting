@@ -1,5 +1,5 @@
 # Constants for Actuarial Calculation
-SCORECARD_VERSION = "1.2.0"
+SCORECARD_VERSION = "1.2.1"
 
 PREMIUM_FLOOR = 350.00
 SST_RATE = 0.08

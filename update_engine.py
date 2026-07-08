@@ -1,4 +1,4 @@
-"""
+new_engine_code = '''"""
 Malaysia Motor Insurance Underwriting Engine (Scorecard v1.2.1)
 """
 from .schemas import *
@@ -529,3 +529,6 @@ def generate_quote(req: QuoteRequest):
         },
         "metadata": metadata
     }
+'''
+with open("backend/app/engine.py", "w") as f:
+    f.write(new_engine_code)
