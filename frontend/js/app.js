@@ -1,9 +1,22 @@
 const testProfiles = [
     {
-        name: "1. The Baseline National Car",
+        name: "Scenario 1: 22yo M, Proton Saga, KL, private, 0 NCD",
         data: {
-            driver_age: 40, gender: "M", years_licensed: "5+ years", occupation: "Professional/Exec", previous_claims_3yr: "0 claims", traffic_violations: 0, telematics_risk: "Low",
-            engine_capacity: 1600, vehicle_age: 3, vehicle_value: 45000, vehicle_category: "Private Car", valuation_type: "Market Value", modification_status: "Stock/standard", safety_features: "ADAS, AEB, ESC", tyre_condition: "New/good",
+            driver_age: 22, gender: "M", years_licensed: "2-4 years", occupation: "Manual/Delivery", previous_claims_3yr: "0 claims", traffic_violations: 0, telematics_risk: "Low",
+            engine_capacity: 1300, vehicle_age: 2, vehicle_value: 35000, vehicle_category: "Private Car", valuation_type: "Market Value", modification_status: "Stock/standard", safety_features: "ADAS, AEB, ESC", tyre_condition: "New/good",
+            usage_type: "Private", parking_night: "Garaged", annual_trips: "<5,000", annual_mileage: 10000,
+            prior_claims_count: 0, average_prior_severity: "Low", ncd_percentage: "0.0", fault_profile: "Not at fault", fraud_indicators: "None",
+            territory: "Urban (KL, Selangor, Penang, Johor)", flood_zone: "Low", crime_rate: "Low", road_type: "Highway primary", seasonal_risk: "Year-round",
+            immobiliser: "Factory fitted", gps_tracking: "None", alarm_system: "OEM alarm",
+            excess_chosen: "Minimum", named_drivers: "1 (owner only)", policy_lapse_history: "No lapse", sum_insured_accuracy: "Accurate", premium_payment: "Annual full",
+            windscreen_cover: false, ncd_protector: false, special_perils_cover: false
+        }
+    },
+    {
+        name: "Scenario 2: 45yo F, Honda City, Penang, private, 55 NCD",
+        data: {
+            driver_age: 45, gender: "F", years_licensed: "5+ years", occupation: "Professional/Exec", previous_claims_3yr: "0 claims", traffic_violations: 0, telematics_risk: "Low",
+            engine_capacity: 1500, vehicle_age: 4, vehicle_value: 70000, vehicle_category: "Private Car", valuation_type: "Market Value", modification_status: "Stock/standard", safety_features: "ADAS, AEB, ESC", tyre_condition: "New/good",
             usage_type: "Private", parking_night: "Garaged", annual_trips: "<5,000", annual_mileage: 10000,
             prior_claims_count: 0, average_prior_severity: "Low", ncd_percentage: "55.0", fault_profile: "Not at fault", fraud_indicators: "None",
             territory: "Urban (KL, Selangor, Penang, Johor)", flood_zone: "Low", crime_rate: "Low", road_type: "Highway primary", seasonal_risk: "Year-round",
@@ -13,15 +26,41 @@ const testProfiles = [
         }
     },
     {
-        name: "2. The Young High-Risk Speedster",
+        name: "Scenario 3: 30yo M, Hilux, Kelantan, commercial, 25 NCD",
         data: {
-            driver_age: 20, gender: "M", years_licensed: "2-4 years", occupation: "Manual/Delivery", previous_claims_3yr: "1 claim", traffic_violations: 2, telematics_risk: "High",
-            engine_capacity: 1500, vehicle_age: 2, vehicle_value: 90000, vehicle_category: "Private Car", valuation_type: "Market Value", modification_status: "Major mods", safety_features: "Minimal", tyre_condition: "Worn/illegal",
-            usage_type: "Private", parking_night: "Street parking", annual_trips: ">10,000", annual_mileage: 15000,
-            prior_claims_count: 1, average_prior_severity: "Low", ncd_percentage: "0.0", fault_profile: "At fault", fraud_indicators: "Suspicious",
-            territory: "Urban (Other)", flood_zone: "Low", crime_rate: "High", road_type: "Urban mixed", seasonal_risk: "Year-round",
-            immobiliser: "None", gps_tracking: "None", alarm_system: "None",
-            excess_chosen: "Minimum", named_drivers: "4+", policy_lapse_history: "2+ lapses", sum_insured_accuracy: "Underinsured >10%", premium_payment: "Monthly",
+            driver_age: 30, gender: "M", years_licensed: "5+ years", occupation: "Manual/Delivery", previous_claims_3yr: "0 claims", traffic_violations: 0, telematics_risk: "Low",
+            engine_capacity: 2400, vehicle_age: 3, vehicle_value: 120000, vehicle_category: "Commercial Pickup", valuation_type: "Market Value", modification_status: "Stock/standard", safety_features: "ADAS, AEB, ESC", tyre_condition: "New/good",
+            usage_type: "Commercial", parking_night: "Garaged", annual_trips: ">10,000", annual_mileage: 20000,
+            prior_claims_count: 0, average_prior_severity: "Low", ncd_percentage: "25.0", fault_profile: "Not at fault", fraud_indicators: "None",
+            territory: "Rural (West Malaysia)", flood_zone: "Low", crime_rate: "Low", road_type: "Highway primary", seasonal_risk: "Year-round",
+            immobiliser: "Factory fitted", gps_tracking: "Active tracking", alarm_system: "OEM alarm",
+            excess_chosen: "High (>1,000)", named_drivers: "1 (owner only)", policy_lapse_history: "No lapse", sum_insured_accuracy: "Accurate", premium_payment: "Annual full",
+            windscreen_cover: false, ncd_protector: false, special_perils_cover: false
+        }
+    },
+    {
+        name: "Scenario 4: 28yo M, BMW 320i, KL, private, 38.33 NCD",
+        data: {
+            driver_age: 28, gender: "M", years_licensed: "5+ years", occupation: "Professional/Exec", previous_claims_3yr: "0 claims", traffic_violations: 0, telematics_risk: "Low",
+            engine_capacity: 2000, vehicle_age: 5, vehicle_value: 250000, vehicle_category: "Luxury Car", valuation_type: "Market Value", modification_status: "Stock/standard", safety_features: "ADAS, AEB, ESC", tyre_condition: "New/good",
+            usage_type: "Private", parking_night: "Garaged", annual_trips: "<5,000", annual_mileage: 10000,
+            prior_claims_count: 0, average_prior_severity: "Low", ncd_percentage: "38.33", fault_profile: "Not at fault", fraud_indicators: "None",
+            territory: "Urban (KL, Selangor, Penang, Johor)", flood_zone: "Low", crime_rate: "Low", road_type: "Highway primary", seasonal_risk: "Year-round",
+            immobiliser: "Factory fitted", gps_tracking: "Active tracking", alarm_system: "OEM alarm",
+            excess_chosen: "High (>1,000)", named_drivers: "1 (owner only)", policy_lapse_history: "No lapse", sum_insured_accuracy: "Accurate", premium_payment: "Annual full",
+            windscreen_cover: false, ncd_protector: false, special_perils_cover: false
+        }
+    },
+    {
+        name: "Scenario 5: 35yo F, Myvi, JB, Grab, 0 NCD",
+        data: {
+            driver_age: 35, gender: "F", years_licensed: "5+ years", occupation: "Manual/Delivery", previous_claims_3yr: "0 claims", traffic_violations: 0, telematics_risk: "Low",
+            engine_capacity: 1500, vehicle_age: 1, vehicle_value: 45000, vehicle_category: "Private Car", valuation_type: "Market Value", modification_status: "Stock/standard", safety_features: "ADAS, AEB, ESC", tyre_condition: "New/good",
+            usage_type: "E-hailing Commercial", parking_night: "Garaged", annual_trips: ">10,000", annual_mileage: 25000,
+            prior_claims_count: 0, average_prior_severity: "Low", ncd_percentage: "0.0", fault_profile: "Not at fault", fraud_indicators: "None",
+            territory: "Urban (KL, Selangor, Penang, Johor)", flood_zone: "Low", crime_rate: "Low", road_type: "Highway primary", seasonal_risk: "Year-round",
+            immobiliser: "Factory fitted", gps_tracking: "Active tracking", alarm_system: "OEM alarm",
+            excess_chosen: "High (>1,000)", named_drivers: "1 (owner only)", policy_lapse_history: "No lapse", sum_insured_accuracy: "Accurate", premium_payment: "Annual full",
             windscreen_cover: false, ncd_protector: false, special_perils_cover: false
         }
     }
