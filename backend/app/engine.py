@@ -392,14 +392,8 @@ def generate_quote(req: QuoteRequest):
     else:
         base_composite_score = 0
     
-    concentration_penalty = 0
-    if base_composite_score > 60:
-        for d in domains.values():
-            if d["max"] > 0 and (d["total"] / d["max"]) > 0.70:
-                concentration_penalty = 5
-                break
-                
-    composite_score = base_composite_score + concentration_penalty
+    
+    composite_score = base_composite_score
     
     # Reinsurance Referral
     reinsurance_referral = False
@@ -502,8 +496,7 @@ def generate_quote(req: QuoteRequest):
             "claims": c_score["breakdown"],
             "environmental": e_score["breakdown"],
             "security": s_score["breakdown"],
-            "policy": p_score["breakdown"],
-            "concentration_penalty": concentration_penalty
+            "policy": p_score["breakdown"]
         },
         "reinsurance_referral": reinsurance_referral,
         "premium_breakdown": {
