@@ -1,42 +1,37 @@
 [
   {
     "scenario": "Scenario 1 (22yo M, Proton Saga, KL, private, 0 NCD)",
-    "v1_1_0_expected": "Sub-standard (15% loading)",
-    "v1_2_0_pre_fix_score": 13,
-    "v1_2_0_pre_fix_decision": "AUTO_APPROVED (0% loading)",
+    "v1_1_0_score": 41,
+    "v1_2_0_pre_fix_score": 10,
     "v1_2_1_post_fix_score": 41,
     "v1_2_1_post_fix_decision": "Sub-standard (15% loading)"
   },
   {
     "scenario": "Scenario 2 (45yo F, Honda City, Penang, private, 55 NCD)",
-    "v1_1_0_expected": "Standard (0% loading)",
-    "v1_2_0_pre_fix_score": 5,
-    "v1_2_0_pre_fix_decision": "AUTO_APPROVED (0% loading)",
+    "v1_1_0_score": 17,
+    "v1_2_0_pre_fix_score": 4,
     "v1_2_1_post_fix_score": 17,
-    "v1_2_1_post_fix_decision": "AUTO_APPROVED (0% loading)"
+    "v1_2_1_post_fix_decision": "Standard (0% loading)"
   },
   {
     "scenario": "Scenario 3 (30yo M, Hilux, Kelantan, commercial, 25 NCD)",
-    "v1_1_0_expected": "Standard (Reinsurance Referral)",
-    "v1_2_0_pre_fix_score": 9,
-    "v1_2_0_pre_fix_decision": "AUTO_APPROVED (Reinsurance Referral)",
-    "v1_2_1_post_fix_score": 31,
-    "v1_2_1_post_fix_decision": "AUTO_APPROVED (Reinsurance Referral)"
+    "v1_1_0_score": 41,
+    "v1_2_0_pre_fix_score": 10,
+    "v1_2_1_post_fix_score": 41,
+    "v1_2_1_post_fix_decision": "Sub-standard (Reinsurance Referral)"
   },
   {
     "scenario": "Scenario 4 (28yo M, BMW 320i, KL, private, 38.33 NCD)",
-    "v1_1_0_expected": "Standard (Reinsurance Referral)",
-    "v1_2_0_pre_fix_score": 9,
-    "v1_2_0_pre_fix_decision": "AUTO_APPROVED (Reinsurance Referral)",
+    "v1_1_0_score": 31,
+    "v1_2_0_pre_fix_score": 8,
     "v1_2_1_post_fix_score": 31,
-    "v1_2_1_post_fix_decision": "AUTO_APPROVED (Reinsurance Referral)"
+    "v1_2_1_post_fix_decision": "Standard (Reinsurance Referral)"
   },
   {
     "scenario": "Scenario 5 (35yo F, Myvi, JB, Grab, 0 NCD)",
-    "v1_1_0_expected": "Sub-standard (15% loading)",
-    "v1_2_0_pre_fix_score": 12,
-    "v1_2_0_pre_fix_decision": "AUTO_APPROVED (0% loading)",
-    "v1_2_1_post_fix_score": 41,
+    "v1_1_0_score": 52,
+    "v1_2_0_pre_fix_score": 13,
+    "v1_2_1_post_fix_score": 52,
     "v1_2_1_post_fix_decision": "Sub-standard (15% loading)"
   }
 ]

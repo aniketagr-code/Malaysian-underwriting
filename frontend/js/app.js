@@ -32,7 +32,7 @@ const testProfiles = [
             engine_capacity: 2400, vehicle_age: 3, vehicle_value: 120000, vehicle_category: "Commercial Pickup", valuation_type: "Market Value", modification_status: "Stock/standard", safety_features: "ADAS, AEB, ESC", tyre_condition: "New/good",
             usage_type: "Commercial", parking_night: "Garaged", annual_trips: ">10,000", annual_mileage: 20000,
             prior_claims_count: 0, average_prior_severity: "Low", ncd_percentage: "25.0", fault_profile: "Not at fault", fraud_indicators: "None",
-            territory: "Rural (West Malaysia)", flood_zone: "Low", crime_rate: "Low", road_type: "Highway primary", seasonal_risk: "Year-round",
+            territory: "Rural (West Malaysia)", flood_zone: "High", crime_rate: "Low", road_type: "Highway primary", seasonal_risk: "Year-round",
             immobiliser: "Factory fitted", gps_tracking: "Active tracking", alarm_system: "OEM alarm",
             excess_chosen: "High (>1,000)", named_drivers: "1 (owner only)", policy_lapse_history: "No lapse", sum_insured_accuracy: "Accurate", premium_payment: "Annual full",
             windscreen_cover: false, ncd_protector: false, special_perils_cover: false
@@ -58,7 +58,7 @@ const testProfiles = [
             engine_capacity: 1500, vehicle_age: 1, vehicle_value: 45000, vehicle_category: "Private Car", valuation_type: "Market Value", modification_status: "Stock/standard", safety_features: "ADAS, AEB, ESC", tyre_condition: "New/good",
             usage_type: "E-hailing Commercial", parking_night: "Garaged", annual_trips: ">10,000", annual_mileage: 25000,
             prior_claims_count: 0, average_prior_severity: "Low", ncd_percentage: "0.0", fault_profile: "Not at fault", fraud_indicators: "None",
-            territory: "Urban (KL, Selangor, Penang, Johor)", flood_zone: "Low", crime_rate: "Low", road_type: "Highway primary", seasonal_risk: "Year-round",
+            territory: "Urban (KL, Selangor, Penang, Johor)", flood_zone: "High", crime_rate: "Low", road_type: "Highway primary", seasonal_risk: "Year-round",
             immobiliser: "Factory fitted", gps_tracking: "Active tracking", alarm_system: "OEM alarm",
             excess_chosen: "High (>1,000)", named_drivers: "1 (owner only)", policy_lapse_history: "No lapse", sum_insured_accuracy: "Accurate", premium_payment: "Annual full",
             windscreen_cover: false, ncd_protector: false, special_perils_cover: false

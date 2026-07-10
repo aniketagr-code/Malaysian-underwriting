@@ -401,13 +401,12 @@ def generate_quote(req: QuoteRequest):
         reinsurance_referral = True
         
     if composite_score >= 80:
-        return {
-            "scorecard_version": SCORECARD_VERSION,
-            "decision": "REFER_TO_UNDERWRITER",
-            "composite_score": composite_score,
-            "reinsurance_referral": reinsurance_referral,
-            "message": "Risk score too high. Referred to underwriter."
-        }
+        base_decision = "Declined"
+    elif composite_score >= 40:
+        base_decision = "Sub-standard"
+    else:
+        base_decision = "Standard"
+
         
     is_east_malaysia = req.territory in [Territory.RURAL_EAST_MALAYSIA]
     cc_rates = CC_RATES_EAST_MALAYSIA if is_east_malaysia else CC_RATES_PENINSULAR
@@ -439,6 +438,15 @@ def generate_quote(req: QuoteRequest):
     risk_loading_amount = round(base_premium * risk_loading_pct, 2)
     gross_base_premium = round(base_premium + risk_loading_amount, 2)
     
+    # Format final decision string
+    if base_decision == "Declined":
+        decision_label = base_decision
+    elif reinsurance_referral:
+        decision_label = f"{base_decision} (Reinsurance Referral)"
+    else:
+        decision_label = f"{base_decision} ({int(risk_loading_pct*100)}% loading)"
+    
+    
     # STEP 3: NCD DEDUCTION
     actual_ncd_percentage = float(req.ncd_percentage)
     
@@ -450,7 +458,11 @@ def generate_quote(req: QuoteRequest):
     discounted_premium = round(gross_base_premium - ncd_discount_amount, 2)
     
     # STEP 4: COMMERCIAL SURCHARGES & CORE RISK ADEQUACY
-    ehailing_surcharge = EHAILING_SURCHARGE if req.usage_type == UsageType.EHAILING_COMMERCIAL else 0.0
+    ehailing_surcharge = 0.0
+    if req.usage_type == UsageType.EHAILING_COMMERCIAL:
+        ehailing_surcharge = EHAILING_SURCHARGE
+        metadata["MANDATORY E-HAILING ENDORSEMENT APPLIED"] = True
+
     core_premium_pre_floor = round(discounted_premium + ehailing_surcharge, 2)
     
     rate_floor_triggered = False
@@ -487,7 +499,7 @@ def generate_quote(req: QuoteRequest):
         
     return {
         "scorecard_version": SCORECARD_VERSION,
-        "decision": "AUTO_APPROVED",
+        "decision": decision_label,
         "composite_score": composite_score,
         "score_breakdown": {
             "driver": d_score["breakdown"],
