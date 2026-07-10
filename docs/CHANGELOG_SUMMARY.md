@@ -20,3 +20,10 @@ This document outlines the specific structural, mathematical, and architectural 
 
 ## 4. Deliverable Generation
 * **Programmatic Excel Model:** Wrote a Python script utilizing `pandas` to systematically generate the required **Deliverable 1** Excel workbook (`Zensung_Underwriting_Model.xlsx`), complete with all 6 mandated sheets (Instructions, Risk Input, Risk Scoring, Premium Calculator, Market Comparison, and 10 Engine Test Cases).
+
+## 5. Post-Audit Bug Fixes (v1.2.1)
+* **Score Suppression & Dynamic Denominator:** Fixed a major bug where missing data points in the JSON payload suppressed the final risk score. We implemented a dynamic denominator that calculates the final percentage based strictly on the `model_fields_set` provided in the API request.
+* **E-Hailing Endorsement Compliance:** Added a mandatory metadata flag (`MANDATORY E-HAILING ENDORSEMENT APPLIED`) to automatically append to policies triggering the RM 400.00 E-hailing surcharge, resolving a compliance oversight.
+* **Decision Vocabulary Alignment:** Re-mapped the engine's hardcoded boolean `AUTO_APPROVED` outputs into the exact `Standard`, `Sub-standard`, and `Declined` strings required by the specification, inclusive of risk loading and reinsurance referral modifiers.
+* **Environmental Mapping Accuracy:** Overrode the frontend and backend testing profiles to strictly map high-risk territories (Kelantan, Johor Bahru) to `High` flood zones, triggering automated Special Perils coverage.
+* **Eliminated Undocumented Penalty:** Removed a hardcoded `concentration_penalty` that was artificially inflating scores by +5 points.

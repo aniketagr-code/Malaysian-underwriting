@@ -1,6 +1,6 @@
-# Comprehensive Underwriting Logic & Risk Scoring System (Scorecard v1.1.0)
+# Comprehensive Underwriting Logic & Risk Scoring System (Scorecard v1.2.1)
 
-This document outlines the complete set of underwriting rules, risk point algorithms, and referral triggers currently hardcoded in `backend/engine.py`. Version 1.1.0 introduces explicit 0-point bands, GLM interaction proxies, and decoupled frequency/severity scoring.
+This document outlines the complete set of underwriting rules, risk point algorithms, and referral triggers currently hardcoded in `backend/app/engine.py`. Version 1.2.1 introduces dynamic denominator-based scoring, exact terminology matching, and environment/endorsement corrections over previous versions.
 
 ---
 
@@ -70,27 +70,20 @@ The system aggregates risk points across 5 distinct domains. The total sum becom
 | **Usage Type** | Private | 0 |
 | | Commercial OR E-Hailing | +4 |
 
----
 
-## 2. GLM Concentration Penalty (Interaction Terms)
-
-Version 1.1.0 introduces a proxy for Generalized Linear Model (GLM) interaction terms. If a risk is heavily concentrated in a single domain, an interaction penalty applies.
-**Rule:** If the pre-penalty Composite Score > 60 AND any single domain exceeds 70% of its maximum possible points, a flat **+5 Concentration Penalty** is added to the Composite Score.
-
----
 
 ## 3. Underwriting Decision Thresholds
 
 ### Auto-Rejection (Underwriter Referral)
 If the **Composite Score >= 80**, the system immediately rejects auto-pricing. 
-* **Result**: "REFER_TO_UNDERWRITER" status. No premium breakdown is returned.
+* **Result**: "Declined" status (with Reinsurance Referral if applicable). No premium breakdown is returned.
 
 ### Premium Risk Loading (Penalties)
 If the score is below 80, the engine calculates the Base Premium and applies a percentage penalty based on the score:
-* **Score 75 to 79**: +50% Risk Loading on Base Premium
-* **Score 60 to 74**: +30% Risk Loading on Base Premium
-* **Score 40 to 59**: +15% Risk Loading on Base Premium
-* **Score 0 to 39**: 0% Risk Loading (Standard Risk)
+* **Score 75 to 79**: +50% Risk Loading on Base Premium (Decision: "Sub-standard")
+* **Score 60 to 74**: +30% Risk Loading on Base Premium (Decision: "Sub-standard")
+* **Score 40 to 59**: +15% Risk Loading on Base Premium (Decision: "Sub-standard")
+* **Score 0 to 39**: 0% Risk Loading (Decision: "Standard")
 
 ---
 
@@ -102,8 +95,8 @@ The quote is flagged for facultative reinsurance review (which alerts the insure
 2. **Usage Type = "Commercial"**
 *Note: E-Hailing Commercial usage is EXCLUDED from individual reinsurance triggers because it is typically handled via fleet-level cession. However, a high-value E-Hailing vehicle (>150k) will still trigger purely based on the sum insured.*
 
-### Hardcoded Surcharges & Floors
-* **E-Hailing Surcharge**: A flat RM 400.00 is added to the Core Premium if Usage Type = "E-hailing Commercial".
+### Hardcoded Surcharges, Endorsements & Floors
+* **E-Hailing Surcharge & Endorsement**: A flat RM 400.00 is added to the Core Premium if Usage Type = "E-hailing Commercial". Additionally, the `MANDATORY E-HAILING ENDORSEMENT APPLIED: True` flag is injected into the payload metadata for compliance.
 * **Minimum Premium Floor**: Regardless of NCD discounts, the Core Premium (Liability/Collision kernel) can never fall below **RM 350.00**. This ensures baseline rate adequacy before Add-Ons are priced.
 
 ---

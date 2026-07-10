@@ -12,7 +12,7 @@ The project utilizes a **Modular Monorepo** structure to separate concerns and e
 
 *   **Backend (The Brain):** Built with **FastAPI** (Python). It acts as a stateless calculation engine. It receives raw data, runs it through multi-layered pricing algorithms, and returns a structured JSON response.
 *   **Frontend (The Presentation Layer):** A lightweight Single Page Application (SPA) built with pure HTML, CSS, and Vanilla JavaScript. It makes asynchronous API calls and renders the mathematical output visually through a 7-domain risk dashboard.
-*   **Data Validation:** Handled by **Pydantic**. Before the underwriting engine even processes a quote, strict schema validation ensures data integrity across 23 distinct required parameters.
+*   **Data Validation:** Handled by **Pydantic**. Before the underwriting engine even processes a quote, strict schema validation ensures data integrity across 22 distinct required parameters.
 
 ---
 
@@ -33,9 +33,9 @@ The engine utilizes a 100-point **Composite Risk Scorecard** based on proxy weig
 What sets this engine apart from standard calculators is its ability to programmatically handle complex insurance edge cases:
 
 *   **The NCD Step-Back Rule:** The engine mathematically enforces the Persatuan Insurans Am Malaysia (PIAM) NCD rules. If a driver declares a prior claim without a Protector add-on, the engine automatically forces their NCD down to 0%.
-*   **GLM Concentration Penalty (Synergistic Risk):** If a profile scores dangerously high (>60 points), the engine overrides the `AUTO_APPROVED` status and forces a `MANUAL_REFERRAL` to protect the insurer's Loss Ratio.
 *   **Premium Flooring:** To prevent over-discounting, the engine enforces a hard minimum base premium floor of RM 350.
 *   **Dynamic Mandatory Perils:** If geographical data indicates a High-Risk Flood Zone, the engine mathematically forces the Flood Endorsement onto the policy, protecting against climate-related total losses.
+*   **E-Hailing Endorsement Compliance:** Mathematically applies commercial surcharges for E-hailing and automatically triggers mandatory metadata endorsement flags for compliance purposes.
 
 ---
 
@@ -43,7 +43,7 @@ What sets this engine apart from standard calculators is its ability to programm
 While the engine successfully digitizes the quoting process, backtesting against historical PIAM datasets (`BITs_Sample_Data_Workbook.xlsx`) revealed two significant mathematical limitations:
 
 1. **Discrete Banding vs. Continuous GLM:** Real-world Malaysian insurers price risk continuously via Generalized Linear Models (GLMs)—every marginal point of risk moves the premium slightly. Our engine uses a simpler rule-based structure, applying loading in four discrete steps (0%, 15%, 30%, 50%). This means two policies with different risk profiles inside the same band get identical loading, guaranteeing a mathematical variance against real-world continuous premiums.
-2. **Sparse Historical Data Suppression:** The legacy historical test data only contained 9 of the 23 scorecard factors. Because we cannot fabricate data to avoid data leakage, the remaining 14 factors defaulted to 0 points ("lowest risk"). During testing, the maximum composite score achieved was only 21 points, which failed to trigger even the first 40-point risk loading tier. The observed 18-35% variance during backtesting is therefore the raw gap between unadjusted base tariffs and real-world finalized premiums.
+2. **Sparse Historical Data Suppression:** The legacy historical test data only contained 9 of the 22 scorecard factors. Because we cannot fabricate data to avoid data leakage, the remaining 13 factors defaulted to 0 points ("lowest risk"). During testing, the maximum composite score achieved was only 21 points, which failed to trigger even the first 40-point risk loading tier. The observed 18-35% variance during backtesting is therefore the raw gap between unadjusted base tariffs and real-world finalized premiums.
 
 ---
 
@@ -59,6 +59,6 @@ During the development of this engine, AI agents were utilized for code generati
 ## 7. Conclusion & Business Value
 The Zensung Underwriting Risk Engine successfully bridges the gap between modern software engineering and complex legacy insurance mathematics. 
 
-By utilizing **"Calibrated Test Weights"** across 23 distinct factors, the engine proves that the architecture is fully functional and capable of handling extreme edge cases. When preparing for a commercial launch, an Actuarial team simply needs to supply their proprietary GLM relativities. Because the system is completely modular, those final numbers can be swapped into the backend in minutes without requiring any structural rewrites. 
+By utilizing **"Calibrated Test Weights"** across 22 distinct factors, the engine proves that the architecture is fully functional and capable of handling extreme edge cases. When preparing for a commercial launch, an Actuarial team simply needs to supply their proprietary GLM relativities. Because the system is completely modular, those final numbers can be swapped into the backend in minutes without requiring any structural rewrites. 
 
 This project stands as a highly viable blueprint for insurers looking to modernize their pricing engines, deploy faster quoting mechanisms, and integrate via APIs with third-party distributors or mobile applications.
