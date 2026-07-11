@@ -265,7 +265,7 @@ function updateDashboard(data) {
     
     const badge = document.getElementById('display_decision');
     badge.textContent = data.decision.replace(/_/g, ' ');
-    if (data.decision === 'AUTO_APPROVED') {
+    if (data.decision.includes('Standard') && !data.decision.includes('Sub-standard') || data.decision === 'AUTO_APPROVED') {
         badge.className = 'decision-badge approved';
     } else {
         badge.className = 'decision-badge referral';
@@ -295,7 +295,9 @@ function updateDashboard(data) {
 
         const getScore = (obj) => {
             if (!obj) return 0;
-            return Object.values(obj).reduce((a, b) => a + b, 0);
+            return Object.values(obj).reduce((a, b) => {
+                return a + (typeof b === 'number' ? b : 0);
+            }, 0);
         };
 
         setProgressBar('driver', getScore(data.score_breakdown.driver), 22);
