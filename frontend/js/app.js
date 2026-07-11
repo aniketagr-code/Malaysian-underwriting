@@ -240,7 +240,7 @@ function resetDashboard() {
         if (txt) txt.innerText = `0 / ${maxVal}`;
     };
     resetProgressBar('driver', 22);
-    resetProgressBar('vehicle', 19);
+    resetProgressBar('vehicle', 24);
     resetProgressBar('usage', 9);
     resetProgressBar('claims', 18);
     resetProgressBar('geo', 13);
@@ -303,7 +303,7 @@ function updateDashboard(data) {
         };
 
         setProgressBar('driver', getScore(data.score_breakdown.driver), 22);
-        setProgressBar('vehicle', getScore(data.score_breakdown.vehicle), 19);
+        setProgressBar('vehicle', getScore(data.score_breakdown.vehicle), 24);
         setProgressBar('usage', getScore(data.score_breakdown.usage), 9);
         setProgressBar('claims', getScore(data.score_breakdown.claims), 18);
         setProgressBar('geo', getScore(data.score_breakdown.environmental), 13);
