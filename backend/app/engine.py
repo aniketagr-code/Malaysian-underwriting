@@ -140,6 +140,15 @@ def calculate_vehicle_score(req: QuoteRequest) -> dict:
         pts["tyre_condition"] = "not scored, no data"
         max_pts["tyre_condition"] = 0
         
+    # Assembly Type
+    if "assembly_type" in supplied and req.assembly_type is not None:
+        max_pts["assembly_type"] = 5
+        if req.assembly_type == "CBU": pts["assembly_type"] = 5
+        else: pts["assembly_type"] = 0
+    else:
+        pts["assembly_type"] = "not scored, no data"
+        max_pts["assembly_type"] = 0
+        
     return {"total": sum(v for v in pts.values() if isinstance(v, int)), "max": sum(max_pts.values()), "breakdown": pts}
 
 def calculate_usage_score(req: QuoteRequest) -> dict:

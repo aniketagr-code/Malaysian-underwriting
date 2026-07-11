@@ -65,7 +65,8 @@ scenarios = [
             "vehicle_category": "Luxury Car",
             "valuation_type": "Market Value",
             "vehicle_age": 5,
-            "usage_type": "Private"
+            "usage_type": "Private",
+            "assembly_type": "CBU"
         }
     },
     {

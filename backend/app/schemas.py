@@ -37,6 +37,10 @@ class UsageType(str, Enum):
     COMMERCIAL = "Commercial"
     EHAILING_COMMERCIAL = "E-hailing Commercial"
 
+class AssemblyType(str, Enum):
+    CBU = "CBU"
+    CKD = "CKD"
+
 class NCDPercentage(float, Enum):
     NCD_0 = 0.0
     NCD_25 = 25.0
@@ -191,6 +195,7 @@ class QuoteRequest(BaseModel):
     modification_status: ModificationStatus = Field(default=ModificationStatus.STANDARD)
     safety_features: SafetyFeatures = Field(default=SafetyFeatures.ADVANCED)
     tyre_condition: TyreCondition = Field(default=TyreCondition.GOOD)
+    assembly_type: Optional[AssemblyType] = Field(default=None)
     
     # Usage factors
     annual_mileage: int = Field(default=10000, ge=0)

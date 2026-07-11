@@ -61,7 +61,8 @@ const testProfiles = [
             vehicle_category: "Luxury Car",
             valuation_type: "Market Value",
             vehicle_age: 5,
-            usage_type: "Private"
+            usage_type: "Private",
+            assembly_type: "CBU"
         }
     },
     {
@@ -154,6 +155,7 @@ form.addEventListener('submit', async (e) => {
         vehicle_value: parseFloat(document.getElementById('vehicle_value').value),
         vehicle_category: document.getElementById('vehicle_category').value,
         valuation_type: document.getElementById('valuation_type').value,
+        assembly_type: document.getElementById('assembly_type').value || null,
         modification_status: document.getElementById('modification_status').value,
         safety_features: document.getElementById('safety_features').value,
         tyre_condition: document.getElementById('tyre_condition').value,
